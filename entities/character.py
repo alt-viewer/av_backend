@@ -4,6 +4,7 @@ from datetime import datetime
 
 from entities.faction import Faction
 from entities.item import Item
+from entities.server import Server
 
 
 @dataclass
@@ -13,5 +14,6 @@ class Character:
     items: List[Item]
     outfit_tag: str
     outfit_id: str
-    faction_id: int
+    faction_id: Faction
     last_login: datetime
+    server_id: Server
