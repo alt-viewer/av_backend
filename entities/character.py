@@ -10,10 +10,10 @@ from entities.server import Servers
 @dataclass
 class Character:
     name: str
-    id: str
+    id: int
     items: List[Item]
-    outfit_tag: str
-    outfit_id: str
+    outfit_tag: str | None
+    outfit_id: int | None
     faction_id: Factions
     last_login: datetime
     server_id: Servers

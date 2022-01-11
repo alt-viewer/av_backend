@@ -1,3 +1,4 @@
 toolz
 thefuzz[speedup]
 yarl
+pydantic

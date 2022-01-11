@@ -8,7 +8,7 @@ from entities.character import Character
 from entities.item import Item
 
 
-def item_ids(char: Character) -> List[str]:
+def item_ids(char: Character) -> List[int]:
     return list(map(lambda i: i.id, char.items))
 
 

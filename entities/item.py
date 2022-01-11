@@ -6,5 +6,5 @@ from datetime import datetime
 class Item:
     """An account-level item possessed by a character."""
 
-    id: str
+    id: int
     last_recorded: datetime

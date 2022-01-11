@@ -4,6 +4,7 @@ from datetime import datetime
 
 from queries.api_query import query
 from entities import Factions, Item, Character, Servers
+from payloads import CharacterPayload, ItemObj
 
 DEFAULT_FIELDS = [
     "items",
@@ -30,33 +31,43 @@ def parse_timestamp(t: str) -> datetime:
     return datetime.fromisoformat(t[:-2])
 
 
-def parse_items(items: list[dict]) -> list[Item]:
+def parse_items(items: list[ItemObj]) -> list[Item]:
     now = datetime.now()
     return toolz.pipe(
         items,
         # account_level might not exist but it could be false if it exists
-        toolz.filter(lambda i: bool(i.get("account_level"))),
-        toolz.map(lambda i: Item(i["item_id"], now)),
+        toolz.filter(lambda i: i.account_level),
+        toolz.map(lambda i: Item(i.item_id, now)),
         list,
     )
 
 
+def convert_payload(data: dict) -> CharacterPayload:
+    char_data = toolz.get_in(["character_list", 0], data)
+    converted = {
+        **char_data,
+        # Explicit conversion needed since Enum doesn't do it
+        "faction_id": int(char_data["faction_id"]),
+        "world_id": int(char_data["world_id"]),
+    }
+    return CharacterPayload(**converted)
+
+
 def parse_character(data: dict) -> Character:
-    char = toolz.get_in(["character_list", 0], data)
-    get = toolz.flip(toolz.get_in)(char)
-    items = get(["items"])
-    if not items:
+    char = convert_payload(data)
+    if not char.items:
         raise ValueError("Character lacks items")
+
     return Character(
-        get(["name", "first"]),
-        get(["character_id"]),
-        parse_items(items),
-        get(["outfit", "alias"]),
-        get(["outfit", "outfit_id"]),
-        Factions(int(get(["faction_id"]))),
-        parse_timestamp(get(["times", "last_login_date"])),
-        Servers(int(get(["world_id"]))),
-        int(get(["battle_rank", "value"])),
+        char.name.first,
+        char.character_id,
+        parse_items(char.items),
+        char.outfit.alias if char.outfit else None,
+        char.outfit.outfit_id if char.outfit else None,
+        char.faction_id,
+        parse_timestamp(char.times.last_login_date),
+        char.world_id,
+        char.battle_rank.value,
     )
 
 
