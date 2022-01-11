@@ -69,7 +69,7 @@ class LoginListener:
         self.queue: dict[str, asyncio.Task] = {}
 
     async def listen(self):
-        url = query(webhook=True)
+        url = query(websocket=True)
         asyncio.create_task(log_db())
         async with self.session.ws_connect(url) as ws:
             await ws.send_json(PAYLOAD)  # Subscribe to logins
