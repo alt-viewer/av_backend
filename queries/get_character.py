@@ -44,10 +44,13 @@ def parse_items(items: list[dict]) -> list[Item]:
 def parse_character(data: dict) -> Character:
     char = toolz.get_in(["character_list", 0], data)
     get = toolz.flip(toolz.get_in)(char)
+    items = get(["items"])
+    if not items:
+        raise ValueError("Character lacks items")
     return Character(
         get(["name", "first"]),
         get(["character_id"]),
-        parse_items(get(["items"])),
+        parse_items(items),
         get(["outfit", "alias"]),
         get(["outfit", "outfit_id"]),
         Factions(int(get(["faction_id"]))),

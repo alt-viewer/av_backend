@@ -4,6 +4,8 @@ import aiohttp
 import asyncio
 from datetime import datetime, timedelta
 import logging
+from sys import getsizeof
+from math import ceil
 
 from queries import get_character, query
 from entities import Character
@@ -28,9 +30,10 @@ get_id = toolz.get_in(["character_id"])
 
 logging.basicConfig(level=logging.DEBUG)
 socket_logger = logging.getLogger("websocket")
+socket_logger.setLevel(logging.INFO)
 character_logger = logging.getLogger("characters")
 
-
+# TODO: batch the character queries
 @toolz.curry
 async def handle_character(session: aiohttp.ClientSession, payload: dict) -> None:
     id = get_id(payload)
@@ -39,7 +42,7 @@ async def handle_character(session: aiohttp.ClientSession, payload: dict) -> Non
     if char:
         # Using the payload's timestamp so that delays in executing
         # this coroutine don't affect this calculation.
-        delta = datetime.fromtimestamp(payload["timestamp"]) - char.last_login
+        delta = datetime.fromtimestamp(int(payload["timestamp"])) - char.last_login
         if delta < timedelta(minutes=15):
             return character_logger.info(
                 f"Ignored character {id}. Time since last login: {delta}"
@@ -47,17 +50,31 @@ async def handle_character(session: aiohttp.ClientSession, payload: dict) -> Non
 
     # Update the character if they're new or it's been a
     # while since they last logged in.
-    db[id] = await get_character(session, id)
-    character_logger.info(f"Added new character {id}")
+    try:
+        db[id] = await get_character(session, id)
+        character_logger.info(f"Added new character {id}")
+    except ValueError:  # Ignore characters that don't have items
+        character_logger.debug(f"Ignored {id} due to no items")
 
 
 def is_login_event(payload: dict) -> bool:
     return payload.get("event_name") == "PlayerLogin"
 
 
+def size(obj) -> str:
+    in_bytes = getsizeof(obj)
+    a = 0
+    acc: float = in_bytes
+    suffixes = ("kB", "MB", "GB", "TB")
+    while acc > 1000:
+        a += 1
+        acc = acc / 1000
+    return f"{ceil(acc)}{suffixes[a]}"
+
+
 async def log_db():
     while True:
-        character_logger.debug(f"Current database: {db}")
+        character_logger.info(f"{len(db)} characters recorded. Memory used: {size(db)}")
         await asyncio.sleep(15)
 
 
