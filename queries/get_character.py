@@ -6,14 +6,21 @@ from queries.api_query import query
 from entities import Factions, Item, Character, Servers
 
 DEFAULT_FIELDS = [
-    "character_id",
-    "name",
     "items",
-    "battle_rank",
-    "times",
-    "outfit",
-    "faction_id",
+    "outfit.alias",
+    "outfit.outfit_id",
     "world_id",
+    "times.last_login_date",
+    "name.first",
+    "character_id",
+    "faction_id",
+    "battle_rank.value",
+]
+
+DEFAULT_JOINS = [
+    "outfit",
+    "world",
+    "item",
 ]
 
 
@@ -35,7 +42,7 @@ def parse_items(items: list[dict]) -> list[Item]:
 
 
 def parse_character(data: dict) -> Character:
-    char = toolz.get_in(["single_character_by_id_list", 0], data)
+    char = toolz.get_in(["character_list", 0], data)
     get = toolz.flip(toolz.get_in)(char)
     return Character(
         get(["name", "first"]),
@@ -50,19 +57,20 @@ def parse_character(data: dict) -> Character:
     )
 
 
-def make_params(fields: list[str], character_id: str) -> dict:
+def make_params(fields: list[str], joins: list[str], character_id: str) -> dict:
     return {
         "character_id": character_id,
         "c:show": ",".join(fields),
-        "c:resolve": "outfit,world",
+        "c:resolve": ",".join(joins),
     }
 
 
 async def get_character(
-    session: ClientSession, id: str, fields: list[str] = None
+    session: ClientSession, id: str, fields: list[str] = None, joins: list[str] = None
 ) -> Character:
     fs = fields or DEFAULT_FIELDS
-    url = query("single_character_by_id", params=make_params(fs, id))
+    js = joins or DEFAULT_JOINS
+    url = query("character", params=make_params(fs, js, id))
     async with session.get(url) as res:
         json = await res.json()
         if not res.ok:
