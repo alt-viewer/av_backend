@@ -2,9 +2,9 @@ from dataclasses import dataclass
 from typing import List
 from datetime import datetime
 
-from entities.faction import Faction
+from entities.faction import Factions
 from entities.item import Item
-from entities.server import Server
+from entities.server import Servers
 
 
 @dataclass
@@ -14,6 +14,6 @@ class Character:
     items: List[Item]
     outfit_tag: str
     outfit_id: str
-    faction_id: Faction
+    faction_id: Factions
     last_login: datetime
-    server_id: Server
+    server_id: Servers
