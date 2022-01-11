@@ -27,8 +27,10 @@ def parse_items(items: list[dict]) -> list[Item]:
     now = datetime.now()
     return toolz.pipe(
         items,
-        toolz.filter(lambda i: bool(i["account_level"])),
+        # account_level might not exist but it could be false if it exists
+        toolz.filter(lambda i: bool(i.get("account_level"))),
         toolz.map(lambda i: Item(i["item_id"], now)),
+        list,
     )
 
 
