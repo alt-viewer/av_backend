@@ -1,4 +1,4 @@
-from typing import Optional, Iterator, List
+from typing import Iterator, List
 from thefuzz.fuzz import ratio
 import toolz.curried
 from datetime import datetime
@@ -14,7 +14,7 @@ def item_ids(char: Character) -> List[str]:
 
 def compare(
     char1: Character, char2: Character, min_confidence: int = 70
-) -> Optional[Match]:
+) -> Match | None:
     is1, is2 = item_ids(char1), item_ids(char2)
     # Comparing 2 characters with no account items is not
     # a useful comparison
