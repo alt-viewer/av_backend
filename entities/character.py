@@ -17,3 +17,4 @@ class Character:
     faction_id: Factions
     last_login: datetime
     server_id: Servers
+    battle_rank: int
