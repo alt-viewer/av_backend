@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 import logging
 from sys import getsizeof
 from math import ceil
-from typing import Callable, Coroutine
+from typing import Callable, Awaitable
 
 from queries import get_character, query
 from entities import Character
@@ -37,7 +37,8 @@ class LoginListener:
     def __init__(
         self,
         session: aiohttp.ClientSession,
-        func: Callable[[LoginPayload], Coroutine[None, None, None]],
+        func: Callable[[LoginPayload], Awaitable[None]],
+        tasks: list[Callable[[dict[int, Character]], Awaitable[None]]] | None = None,
     ):
         """
         func is an async function that will be called on LoginPayloads.
