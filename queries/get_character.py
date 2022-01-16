@@ -77,8 +77,7 @@ def parse_characters(data: dict) -> Iterator[Character]:
         toolz.get_in(["character_list"]),
         # Ignore characters that have no items
         toolz.filter(toolz.get_in(["items"])),
-        toolz.compose(lambda c: CharacterPayload(**c), cast_char),
-        make_char,
+        toolz.map(toolz.compose(make_char, lambda c: CharacterPayload(**c), cast_char)),
     )
 
 
