@@ -1,6 +1,7 @@
 from aiohttp import ClientSession
 import toolz.curried as toolz
 from datetime import datetime
+from typing import Iterator
 
 from queries.api_query import query
 from entities import Factions, Item, Character, Servers
@@ -53,11 +54,6 @@ def cast_char(char_data: dict) -> dict:
     }
 
 
-convert_payload = lambda xs: toolz.map(
-    toolz.compose(lambda c: CharacterPayload(**c), cast_char)
-)(toolz.compose(toolz.do(print), toolz.get_in(["character_list"]), toolz.do(print))(xs))
-
-
 def make_char(char: CharacterPayload) -> Character:
     if not char.items:
         raise ValueError("Character lacks items")
@@ -75,7 +71,15 @@ def make_char(char: CharacterPayload) -> Character:
     )
 
 
-parse_characters = toolz.compose(toolz.map(make_char), convert_payload)
+def parse_characters(data: dict) -> Iterator[Character]:
+    return toolz.pipe(
+        data,
+        toolz.get_in(["character_list"]),
+        # Ignore characters that have no items
+        toolz.filter(toolz.get_in(["items"])),
+        toolz.compose(lambda c: CharacterPayload(**c), cast_char),
+        make_char,
+    )
 
 
 def make_params(fields: list[str], joins: list[str], character_id: str) -> dict:
@@ -89,7 +93,7 @@ def make_params(fields: list[str], joins: list[str], character_id: str) -> dict:
 @toolz.curry
 async def get_characters(
     session: ClientSession, ids: str, fields: list[str] = None, joins: list[str] = None
-) -> Character:
+) -> Iterator[Character]:
     fs = fields or DEFAULT_FIELDS
     js = joins or DEFAULT_JOINS
     url = query("character", params=make_params(fs, js, ",".join(ids)))
