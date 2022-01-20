@@ -6,7 +6,7 @@ import sys
 
 from listener import LoginListener, CharacterQueue
 from queries import get_characters
-from database import push_db, log_db
+from database import push_db, log_db, push_chars
 from logger import with_logger
 
 
@@ -14,7 +14,7 @@ async def main():
     async with ClientSession() as session:
         # Create dependencies of the listener
         getter = toolz.curry(get_characters)(session)
-        queue = CharacterQueue(getter, push_db)
+        queue = CharacterQueue(getter, push_chars)
         listener = LoginListener(session, queue)
 
         # Logging tasks
