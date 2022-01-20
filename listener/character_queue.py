@@ -16,10 +16,11 @@ char_lock = Lock()
 def with_check(func: Callable[..., None]) -> Callable[..., Awaitable[None]]:
     @wraps(func)
     async def inner(queue: "CharacterQueue", *args, **kwargs):
-        func(queue, *args, **kwargs)
-        logger.debug(f"{len(queue)} characters in the queue")
-        if queue.should_request():
-            await queue.request()
+        async with char_lock:
+            func(queue, *args, **kwargs)
+            logger.debug(f"{len(queue)} characters in the queue")
+            if queue.should_request():
+                await queue.request()
 
     return inner
 
@@ -55,9 +56,8 @@ class CharacterQueue:
 
     async def request(self) -> None:
         logger.info(f"Requesting {len(self)} characters")
-        async with char_lock:
-            chars = await self._req(self._queue)
-            self._queue.clear()
+        chars = await self._req(self._queue)
+        self._queue.clear()
         await self.put(chars)
 
     def should_request(self) -> bool:
