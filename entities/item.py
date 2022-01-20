@@ -10,4 +10,4 @@ class Item:
     last_recorded: datetime
 
     def json(self) -> dict:
-        return {"id": self.id, "last_recorded": self.last_recorded}
+        return {"id": self.id, "last_recorded": self.last_recorded.isoformat()}

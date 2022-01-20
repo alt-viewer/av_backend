@@ -26,9 +26,8 @@ class Character:
             "outfit_id": self.outfit_id,
             "faction_id": self.faction_id.value,
             "server_id": self.server_id.value,
-            "faction_id": self.faction_id,
             "battle_rank": self.battle_rank,
-            "last_login": self.last_login,
+            "last_login": self.last_login.isoformat(),
             "items": list(map(lambda i: i.json(), self.items)),
         }
 
