@@ -18,9 +18,25 @@ class Character:
     server_id: Servers
     battle_rank: int
 
+    def json(self) -> dict:
+        return {
+            "name": self.name,
+            "id": self.id,
+            "outfit_tag": self.outfit_tag,
+            "outfit_id": self.outfit_id,
+            "faction_id": self.faction_id,
+            "server_id": self.server_id,
+            "faction_id": self.faction_id,
+            "battle_rank": self.battle_rank,
+            "last_login": self.last_login,
+            "items": list(map(lambda i: i.json(), self.items)),
+        }
+
 
 @dataclass
 class DBCharacter(Character):
     peers: list[int]
     eliminated: list[int]
-    uid: str
+
+    def json(self) -> dict:
+        return {**super().json(), "peers": self.peers, "eliminated": self.eliminated}
