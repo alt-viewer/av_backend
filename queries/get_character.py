@@ -91,11 +91,15 @@ def make_params(fields: list[str], joins: list[str], character_id: str) -> dict:
 
 @toolz.curry
 async def get_characters(
-    session: ClientSession, ids: str, fields: list[str] = None, joins: list[str] = None
+    session: ClientSession,
+    ids: Iterator[int],
+    fields: list[str] = None,
+    joins: list[str] = None,
 ) -> Iterator[Character]:
     fs = fields or DEFAULT_FIELDS
     js = joins or DEFAULT_JOINS
-    url = query("character", params=make_params(fs, js, ",".join(ids)))
+    joined = ",".join(map(str, ids))
+    url = query("character", params=make_params(fs, js, joined))
     async with session.get(url) as res:
         json = await res.json()
         if not res.ok:
