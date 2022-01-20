@@ -6,12 +6,15 @@ import toolz.curried as toolz
 ReturnType = TypeVar("ReturnType")
 
 
-def with_page(
-    func: Callable[[Sequence], Awaitable[ReturnType]], page_size: int = 100
-) -> Callable[[Sequence], Awaitable[list[ReturnType]]]:
-    @wraps(func)
-    def inner(xs):
-        pages = toolz.partition_all(page_size, xs)
-        return gather(*map(func, pages))
+def with_page(page_size: int = 100):
+    def outer(
+        func: Callable[[Sequence], Awaitable[ReturnType]]
+    ) -> Callable[[Sequence], Awaitable[list[ReturnType]]]:
+        @wraps(func)
+        def inner(xs):
+            pages = toolz.partition_all(page_size, xs)
+            return gather(*map(func, pages))
 
-    return inner
+        return inner
+
+    return outer
