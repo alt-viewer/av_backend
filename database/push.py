@@ -2,6 +2,7 @@ from math import ceil
 from sys import getsizeof
 import logging
 import asyncio
+from typing import Iterator
 
 from entities import Character
 
@@ -26,6 +27,6 @@ def size(obj) -> str:
     return f"{ceil(acc)}{suffixes[a]}"
 
 
-async def push_db(*chars: Character) -> None:
+async def push_db(chars: Iterator[Character]) -> None:
     for char in chars:
         db[char.id] = char
