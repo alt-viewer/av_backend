@@ -10,6 +10,8 @@ from entities import Character
 logger = logging.getLogger("character queue")
 logger.setLevel(logging.DEBUG)
 
+char_lock = Lock()
+
 
 def with_check(func: Callable[..., None]) -> Callable[..., Awaitable[None]]:
     @wraps(func)
@@ -52,7 +54,7 @@ class CharacterQueue:
         self._queue.add(id)
 
     async def request(self) -> None:
-        async with Lock():
+        async with char_lock:
             chars = await self._req(self._queue)
             self._queue.clear()
         await self.put(chars)
