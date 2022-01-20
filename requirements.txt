@@ -2,3 +2,4 @@ toolz
 thefuzz[speedup]
 yarl
 pydantic
+pydgraph
