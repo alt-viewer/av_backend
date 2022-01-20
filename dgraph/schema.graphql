@@ -1,0 +1,18 @@
+type Character {
+  name: String!
+  id: Int! @id
+  outfit_tag: String
+  outfit_id: Int
+  faction_id: Int!
+  server_id: Int!
+  battle_rank: Int!
+  last_login: DateTime!
+  items: [Item!]!
+  peers: [Character!]
+  eliminated: [Character!]
+}
+
+type Item {
+  id: Int! @id
+  last_recorded: DateTime!
+}
