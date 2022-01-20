@@ -54,6 +54,7 @@ class CharacterQueue:
         self._queue.add(id)
 
     async def request(self) -> None:
+        logger.info(f"Requesting {len(self)} characters")
         async with char_lock:
             chars = await self._req(self._queue)
             self._queue.clear()
