@@ -1,16 +1,13 @@
 import toolz.curried as toolz
 from typing import Iterator
+from operator import methodcaller
+from traceback import print_exc
 
 from database.db_client import client
-from database.mutation import mutations
 from entities import Character
+from database.mutation import batch_mutate
 
 
 async def push_chars(chars: list[Character]) -> None:
-    txn = client.txn()
-    try:
-        for char in chars:
-            txn.mutate(set_obj=char.json())
-        txn.commit()
-    finally:
-        txn.discard()
+    js = map(methodcaller("json"), chars)
+    batch_mutate(client, lambda x: print_exc(), js)
