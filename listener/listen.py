@@ -2,16 +2,14 @@ from entities.character import Character
 import toolz.curried as toolz
 import aiohttp
 import asyncio
-from datetime import datetime, timedelta
 import logging
-from sys import getsizeof
-from math import ceil
-from typing import Callable, Coroutine
+from queue import Queue
+from typing import Callable, Awaitable
 
-from queries import get_character, query
+from queries import query
 from entities import Character
 from payloads import LoginPayload
-from listener.handle_char import handle_character, get_id, character_logger, log_db
+from listener.character_queue import CharacterQueue
 
 PAYLOAD = {
     "service": "event",
@@ -25,8 +23,11 @@ PAYLOAD = {
     ],
     "eventNames": ["PlayerLogin"],
 }
-logging.basicConfig(level=logging.DEBUG)
+
 socket_logger = logging.getLogger("websocket")
+socket_logger.setLevel(logging.INFO)
+character_logger = logging.getLogger("characters")
+character_logger.setLevel(logging.INFO)
 
 
 def is_login_event(payload: dict) -> bool:
@@ -34,20 +35,14 @@ def is_login_event(payload: dict) -> bool:
 
 
 class LoginListener:
-    def __init__(
-        self,
-        session: aiohttp.ClientSession,
-        func: Callable[[LoginPayload], Coroutine[None, None, None]],
-    ):
+    def __init__(self, session: aiohttp.ClientSession, queue: "CharacterQueue"):
         """
         func is an async function that will be called on LoginPayloads.
         It should perform a side effect on the data.
         """
         self.session = session
-        self.handle_char = handle_character(session)
+        self.queue = queue
         self.run = True
-        self.queue: dict[int, asyncio.Task] = {}
-        self.func = func
 
     async def listen(self):
         """
@@ -55,7 +50,6 @@ class LoginListener:
         login event stream and call the given function on login payloads.
         """
         url = query(websocket=True)
-        asyncio.create_task(log_db())
         async with self.session.ws_connect(url) as ws:
             await ws.send_json(PAYLOAD)  # Subscribe to logins
             socket_logger.info("Created websocket connection")
@@ -71,14 +65,9 @@ class LoginListener:
                     self.queue_char(LoginPayload(**payload))
 
     def queue_char(self, payload: LoginPayload) -> None:
-        """Add a character to the queue. Cancel existing entries for that character."""
+        """Add a character to the queue"""
         id = payload.character_id
-        if id in self.queue:
-            character_logger.debug(f"Cancelled request for {id}")
-            self.queue[id].cancel()
-        coro = self.func(payload)
-        task = asyncio.create_task(coro)
-        self.queue[id] = task
+        asyncio.create_task(self.queue.add(id))
         character_logger.debug(f"Queued character {id}")
 
     async def stop(self):

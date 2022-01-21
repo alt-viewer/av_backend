@@ -1,7 +1,7 @@
 from listener.listen import LoginListener
-from listener.handle_char import handle_character
+from listener.character_queue import CharacterQueue
 
 __all__ = [
     "LoginListener",
-    "handle_character",
+    "CharacterQueue",
 ]

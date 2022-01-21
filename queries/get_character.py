@@ -1,10 +1,12 @@
 from aiohttp import ClientSession
 import toolz.curried as toolz
 from datetime import datetime
+from typing import Iterator
 
 from queries.api_query import query
 from entities import Factions, Item, Character, Servers
 from payloads import CharacterPayload, ItemObj
+from queries.batch import with_page
 
 DEFAULT_FIELDS = [
     "items",
@@ -42,19 +44,17 @@ def parse_items(items: list[ItemObj]) -> list[Item]:
     )
 
 
-def convert_payload(data: dict) -> CharacterPayload:
-    char_data = toolz.get_in(["character_list", 0], data)
-    converted = {
+def cast_char(char_data: dict) -> dict:
+    """Cast the types of the character response to the appropriate types"""
+    return {
         **char_data,
         # Explicit conversion needed since Enum doesn't do it
         "faction_id": int(char_data["faction_id"]),
         "world_id": int(char_data["world_id"]),
     }
-    return CharacterPayload(**converted)
 
 
-def parse_character(data: dict) -> Character:
-    char = convert_payload(data)
+def make_char(char: CharacterPayload) -> Character:
     if not char.items:
         raise ValueError("Character lacks items")
 
@@ -71,6 +71,16 @@ def parse_character(data: dict) -> Character:
     )
 
 
+def parse_characters(data: dict) -> Iterator[Character]:
+    return toolz.pipe(
+        data,
+        toolz.get_in(["character_list"]),
+        # Ignore characters that have no items
+        toolz.filter(toolz.get_in(["items"])),
+        toolz.map(toolz.compose(make_char, lambda c: CharacterPayload(**c), cast_char)),
+    )
+
+
 def make_params(fields: list[str], joins: list[str], character_id: str) -> dict:
     return {
         "character_id": character_id,
@@ -79,14 +89,22 @@ def make_params(fields: list[str], joins: list[str], character_id: str) -> dict:
     }
 
 
-async def get_character(
-    session: ClientSession, id: str, fields: list[str] = None, joins: list[str] = None
-) -> Character:
+@toolz.curry
+async def get_characters(
+    session: ClientSession,
+    ids: Iterator[int],
+    fields: list[str] = None,
+    joins: list[str] = None,
+) -> Iterator[Character]:
     fs = fields or DEFAULT_FIELDS
     js = joins or DEFAULT_JOINS
-    url = query("character", params=make_params(fs, js, id))
+    joined = ",".join(map(str, ids))
+    url = query("character", params=make_params(fs, js, joined))
     async with session.get(url) as res:
         json = await res.json()
         if not res.ok:
             raise RuntimeError(res.reason)
-        return parse_character(json)
+        return parse_characters(json)
+
+
+paged_get_chars = lambda session: with_page(get_characters(session))
