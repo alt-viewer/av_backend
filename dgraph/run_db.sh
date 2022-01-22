@@ -1,1 +1,1 @@
-docker start dgraph
+systemctl start docker && docker start dgraph
