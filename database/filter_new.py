@@ -7,14 +7,14 @@ from entities import Character
 
 query = gql(
     """
-query inDB($xids: [String!]!) {
+query inDB($xids: [Int64!]!) {
     queryCharacter(filter: {
         xid: {
         in: $xids
         }
     }) {
-xid
-}
+    xid
+    }
 }
     """
 )
@@ -26,5 +26,5 @@ async def new_chars(
     res = await client.execute(
         query, variable_values={"xids": list(map(attrgetter("id"), chars))}
     )
-    exists = get_in(["data", "queryCharacter"])
-    return list(filter(lambda c: c.id in exists, chars))
+    exists = get_in(["queryCharacter"], res)
+    return list(filter(lambda c: c.id not in exists, chars))
