@@ -9,7 +9,7 @@ type Character {
   """
   xid: Int64! @id @search
   outfit_tag: String
-  outfit_id: Int
+  outfit_id: Int64
   faction_id: Int!
   server_id: Int!
   battle_rank: Int!
