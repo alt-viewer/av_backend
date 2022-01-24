@@ -31,5 +31,5 @@ query = gql(
 async def get_match_chars(session: AsyncClientSession) -> list[MatchChar]:
     """This query is designed for generating matches between characters."""
     res = await session.execute(query)
-    chars = get_in(["data", "queryCharacter"], res)
+    chars = get_in(["queryCharacter"], res)
     return list(map(convert_matchchar, chars))
