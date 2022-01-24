@@ -1,6 +1,6 @@
 type Character {
   name: String! @search(by: [regexp])
-  id: ID!
+  uid: ID!
   xid: Int! @id @search
   outfit_tag: String
   outfit_id: Int
