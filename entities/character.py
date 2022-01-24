@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
+from pydantic import BaseModel
 
 from entities.faction import Factions
 from entities.item import Item
@@ -9,7 +10,7 @@ from entities.server import Servers
 @dataclass
 class Character:
     name: str
-    id: int
+    id: str
     items: list[Item]
     outfit_tag: str | None
     outfit_id: int | None
@@ -21,7 +22,7 @@ class Character:
     def json(self) -> dict:
         return {
             "name": self.name,
-            "id": self.id,
+            "xid": self.id,
             "outfit_tag": self.outfit_tag,
             "outfit_id": self.outfit_id,
             "faction_id": self.faction_id.value,
@@ -39,3 +40,13 @@ class DBCharacter(Character):
 
     def json(self) -> dict:
         return {**super().json(), "peers": self.peers, "eliminated": self.eliminated}
+
+
+class MatchChar(BaseModel):
+    """A partial character object to be used for generating matches."""
+
+    uid: str
+    last_login: datetime
+    items: list[Item]
+    # A list of uids of the eliminated peers
+    eliminated: list[str]
