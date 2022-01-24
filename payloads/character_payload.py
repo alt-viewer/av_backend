@@ -41,6 +41,6 @@ class CharacterPayload(BaseModel):
     world_id: Servers
     times: TimesObj
     name: NameObj
-    character_id: str
+    character_id: int
     faction_id: Factions
     battle_rank: BattleRankObj

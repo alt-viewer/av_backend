@@ -6,8 +6,8 @@ from datetime import datetime
 class Item:
     """An account-level item possessed by a character."""
 
-    id: str
+    id: int
     last_recorded: datetime
 
     def json(self) -> dict:
-        return {"xid": self.id, "last_recorded": self.last_recorded.isoformat()}
+        return {"id": self.id, "last_recorded": self.last_recorded.isoformat()}
