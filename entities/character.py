@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
+from pydantic import BaseModel
 
 from entities.faction import Factions
 from entities.item import Item
@@ -21,7 +22,7 @@ class Character:
     def json(self) -> dict:
         return {
             "name": self.name,
-            "id": self.id,
+            "xid": self.id,
             "outfit_tag": self.outfit_tag,
             "outfit_id": self.outfit_id,
             "faction_id": self.faction_id.value,
@@ -39,3 +40,12 @@ class DBCharacter(Character):
 
     def json(self) -> dict:
         return {**super().json(), "peers": self.peers, "eliminated": self.eliminated}
+
+
+class MatchChar(BaseModel):
+    """A partial Character used for comparing characters."""
+
+    uid: int
+    last_login: datetime
+    items: list[Item]
+    eliminated: list[int]
