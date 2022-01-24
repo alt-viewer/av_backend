@@ -37,7 +37,7 @@ class CharacterQueue:
         put_chars: Callable[[list[Character]], Awaitable[None]],
         min_size: int = 20,
     ):
-        self._req = with_page()(requester)
+        self.req = with_page()(requester)
         self.min = min_size
         self.put = put_chars
         self._queue: set[int] = set()
@@ -56,7 +56,7 @@ class CharacterQueue:
 
     async def request(self) -> None:
         logger.info(f"Requesting {len(self)} characters")
-        chars = await self._req(self._queue)
+        chars = await self.req(self._queue)
         self._queue.clear()
         await self.put(chars)
 
