@@ -1,5 +1,6 @@
 from gql import gql
 from gql.client import AsyncClientSession
+from typing import Iterator
 
 from entities.character import Character
 from database.filter_new import new_chars
@@ -16,6 +17,7 @@ mutation addCharacters($characters: [AddCharacterInput!]!) {
 )
 
 
-async def push_chars(client: AsyncClientSession, chars: list[Character]) -> None:
-    new = await new_chars(client, chars)
+async def push_chars(client: AsyncClientSession, chars: Iterator[Character]) -> None:
+    lchars = list(chars)  # this generator needs to be reused
+    new = await new_chars(client, lchars)
     await client.execute(query, variable_values={"characters": char_jsons(new)})
