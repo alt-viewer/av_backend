@@ -1,6 +1,12 @@
 type Character {
   name: String! @search(by: [regexp])
+  """
+  The DGraph ID for the character
+  """
   id: ID!
+  """
+  The Planetside 2 API ID for the character
+  """
   xid: Int! @id @search
   outfit_tag: String
   outfit_id: Int
@@ -14,7 +20,13 @@ type Character {
 }
 
 type Item {
+  """
+  The DGraph ID for the item
+  """
   id: ID!
+  """
+  The Planetside 2 API ID for the item
+  """
   xid: Int! @id @search
   last_recorded: DateTime!
 }
