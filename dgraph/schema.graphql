@@ -7,7 +7,7 @@ type Character {
   """
   The Planetside 2 API ID for the character
   """
-  xid: Int! @id @search
+  xid: Int64! @id @search
   outfit_tag: String
   outfit_id: Int
   faction_id: Int!
@@ -27,6 +27,6 @@ type Item {
   """
   The Planetside 2 API ID for the item
   """
-  xid: Int! @id @search
+  xid: Int64! @id @search
   last_recorded: DateTime!
 }
