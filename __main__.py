@@ -9,7 +9,7 @@ from toolz import curry
 
 from listener import LoginListener, CharacterQueue
 from queries import get_characters
-from database import push_db, log_db, push_chars, GQLTransport
+from database import log_task, push_chars, GQLTransport
 from logger import with_logger
 
 API_URL = "http://localhost:8080/graphql"
@@ -26,7 +26,7 @@ async def main():
             listener = LoginListener(asession, queue)
 
             # Logging tasks
-            # here
+            asyncio.create_task(log_task(gsession))
 
             try:
                 await listener.listen()
