@@ -2,4 +2,5 @@ toolz
 thefuzz[speedup]
 yarl
 pydantic
-pydgraph
+
+gql[all]
