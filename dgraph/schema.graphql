@@ -1,6 +1,7 @@
 type Character {
-  name: String!
-  id: Int! @id
+  name: String! @search(by: [regexp])
+  id: ID!
+  xid: Int! @id @search
   outfit_tag: String
   outfit_id: Int
   faction_id: Int!
@@ -13,6 +14,7 @@ type Character {
 }
 
 type Item {
-  id: Int! @id
+  id: ID!
+  xid: Int! @id @search
   last_recorded: DateTime!
 }
