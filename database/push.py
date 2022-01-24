@@ -6,7 +6,7 @@ from typing import Iterator
 
 from entities import Character
 
-db: dict[int, Character] = {}
+db: dict[str, Character] = {}
 character_logger = logging.getLogger("characters")
 
 

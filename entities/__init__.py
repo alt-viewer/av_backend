@@ -1,4 +1,4 @@
-from entities.character import Character, DBCharacter
+from entities.character import Character, DBCharacter, MatchChar
 from entities.faction import Factions
 from entities.server import Servers
 from entities.item import Item
@@ -11,4 +11,5 @@ __all__ = [
     "Item",
     "Match",
     "DBCharacter",
+    "MatchChar",
 ]

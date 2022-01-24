@@ -2,5 +2,4 @@ toolz
 thefuzz[speedup]
 yarl
 pydantic
-
-gql[all]
+gql[aiohttp]

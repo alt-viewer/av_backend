@@ -1,13 +1,21 @@
-import toolz.curried as toolz
-from typing import Iterator
-from operator import methodcaller
-from traceback import print_exc
+from gql import gql
+from gql.client import AsyncClientSession
 
-from database.db_client import client
-from entities import Character
-from database.mutation import batch_mutate
+from entities.character import Character
+from database.filter_new import new_chars
+from database.converters.char_json import char_jsons
+
+query = gql(
+    """
+mutation addCharacters($characters: [AddCharacterInput!]!) {
+  addCharacter(input: $characters) {
+    numUids
+  }
+}
+"""
+)
 
 
-async def push_chars(chars: list[Character]) -> None:
-    js = map(methodcaller("json"), chars)
-    batch_mutate(client, lambda x: print_exc(), js)
+async def push_chars(client: AsyncClientSession, chars: list[Character]) -> None:
+    new = await new_chars(client, chars)
+    await client.execute(query, variable_values={"characters": char_jsons(new)})
