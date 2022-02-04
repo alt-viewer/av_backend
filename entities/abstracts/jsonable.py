@@ -1,6 +1,6 @@
-from abc import ABCMeta
+from abc import ABC
 
 
-class Jsonable(ABCMeta):
+class Jsonable(ABC):
     def json(self) -> dict:
         ...
