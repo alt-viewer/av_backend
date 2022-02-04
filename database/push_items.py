@@ -24,4 +24,4 @@ async def push_items(
 ) -> Iterator[str]:
     """Add/update the given items in the database and return their internal IDs"""
     res = await client.execute(query, variable_values={"items": convert_json(items)})
-    return map(toolz.get_in(["id"]), res["addItem"])
+    return map(toolz.get_in(["id"]), toolz.get_in(["addItem", "item"], res))
