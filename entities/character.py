@@ -33,6 +33,31 @@ class Character(Jsonable):
             "items": list(map(lambda i: i.json(), self.items)),
         }
 
+    def update(
+        self,
+        name: str = None,
+        id: int = None,
+        items: list[Item] = None,
+        outfit_tag: str | None = None,
+        outfit_id: int | None = None,
+        faction_id: Factions = None,
+        last_login: datetime = None,
+        server_id: Servers = None,
+        battle_rank: int = None,
+    ) -> Character:
+        """Create a new character with the union of the new and old attributes"""
+        return Character(
+            name or self.name,
+            id or self.id,
+            items or self.items,
+            outfit_tag or self.outfit_tag,
+            outfit_id or self.outfit_id,
+            faction_id or self.faction_id,
+            last_login or self.last_login,
+            server_id or self.server_id,
+            battle_rank or self.battle_rank,
+        )
+
 
 @dataclass
 class DBCharacter(Character):
