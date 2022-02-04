@@ -1,5 +1,9 @@
 from gql.transport.aiohttp import AIOHTTPTransport
+from gql.client import AsyncClientSession
 from aiohttp import ClientSession
+from typing import TypeAlias
+
+GQLClient: TypeAlias = AsyncClientSession
 
 
 class GQLTransport(AIOHTTPTransport):
