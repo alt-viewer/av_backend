@@ -3,6 +3,7 @@ from entities.faction import Factions
 from entities.server import Servers
 from entities.item import Item
 from entities.match import Match
+from entities import abstracts
 
 __all__ = [
     "Character",
@@ -12,4 +13,5 @@ __all__ = [
     "Match",
     "DBCharacter",
     "MatchChar",
+    "abstracts",
 ]
