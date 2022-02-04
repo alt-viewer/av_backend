@@ -1,15 +1,17 @@
-from entities import MatchChar, Item
 from toolz.curried import get_in
 
-
-def convert_item(i: dict) -> Item:
-    return Item(i["xid"], i["last_recorded"])
+from entities import MatchChar, Item
+from converters.item import load_items
 
 
 def convert_matchchar(char: dict) -> MatchChar:
+    """
+    Convert a database response for a character to
+    a format specialised for character matching
+    """
     return MatchChar(
         uid=char["id"],
         last_login=char["last_login"],
-        items=list(map(convert_item, char["items"])),
+        items=load_items(char["items"]),
         eliminated=list(map(get_in(["id"]), char["eliminated"])),
     )

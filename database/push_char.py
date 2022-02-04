@@ -4,7 +4,7 @@ from typing import Iterator
 
 from entities.character import Character
 from database.filter_new import new_chars
-from database.converters.json import convert_json
+from converters.json import convert_json
 
 query = gql(
     """

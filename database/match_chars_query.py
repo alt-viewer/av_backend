@@ -3,7 +3,7 @@ from gql.client import AsyncClientSession
 from toolz import get_in
 
 from entities import MatchChar
-from database.converters import convert_matchchar
+from converters import convert_matchchar
 
 query = gql(
     """

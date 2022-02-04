@@ -4,7 +4,7 @@ from typing import Iterator
 import toolz.curried as toolz
 
 from entities.character import Item
-from database.converters.json import convert_json
+from converters import convert_json
 
 query = gql(
     """
