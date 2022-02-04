@@ -1,9 +1,11 @@
 from dataclasses import dataclass
 from datetime import datetime
 
+from entities.abstracts.jsonable import Jsonable
+
 
 @dataclass
-class Item:
+class Item(Jsonable):
     """An account-level item possessed by a character."""
 
     id: int

@@ -5,10 +5,11 @@ from pydantic import BaseModel
 from entities.faction import Factions
 from entities.item import Item
 from entities.server import Servers
+from entities.abstracts.jsonable import Jsonable
 
 
 @dataclass
-class Character:
+class Character(Jsonable):
     name: str
     id: int
     items: list[Item]
