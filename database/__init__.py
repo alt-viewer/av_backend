@@ -2,6 +2,7 @@ from database.push_char import push_chars
 from database.transport import GQLTransport
 from database.filter_new import new_chars
 from database.log_db import log_task
+from database.push_items import push_items
 
 __all__ = [
     "push_db",
@@ -10,4 +11,5 @@ __all__ = [
     "GQLTransport",
     "new_chars",
     "log_task",
+    "push_items",
 ]
