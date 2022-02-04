@@ -4,7 +4,7 @@ from typing import Iterator
 
 from entities.character import Character
 from database.filter_new import new_chars
-from database.converters.char_json import convert_json
+from database.converters.json import convert_json
 
 query = gql(
     """
@@ -20,4 +20,4 @@ mutation addCharacters($characters: [AddCharacterInput!]!) {
 async def push_chars(client: AsyncClientSession, chars: Iterator[Character]) -> None:
     lchars = list(chars)  # this generator needs to be reused
     new = await new_chars(client, lchars)
-    await client.execute(query, variable_values={"characters": convert_json(new)})
+    await client.execute(query, variable_values={"characters": convert_json(iter(new))})
