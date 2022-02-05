@@ -1,7 +1,7 @@
 from converters.item import load_items, parse_char_items, item_intersection
 from converters.json import convert_json
 from converters.match_char import convert_matchchar
-from converters.char import cast_char, make_char, parse_characters
+from converters.char import cast_char, make_char, parse_characters, load_char
 
 __all__ = [
     "load_items",
@@ -11,4 +11,5 @@ __all__ = [
     "make_char",
     "parse_characters",
     "item_intersection",
+    "load_char",
 ]

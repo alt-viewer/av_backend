@@ -3,8 +3,8 @@ from typing import Iterator
 import toolz.curried as toolz
 
 from payloads import CharacterPayload
-from entities import Character
-from converters.item import parse_char_items
+from entities import Character, Factions, Servers
+from converters.item import parse_char_items, load_items
 
 
 def parse_timestamp(t: str) -> datetime:
@@ -50,4 +50,22 @@ def parse_characters(data: dict) -> Iterator[Character]:
         # Ignore characters that have no items
         toolz.filter(toolz.get_in(["items"])),
         toolz.map(toolz.compose(make_char, lambda c: CharacterPayload(**c), cast_char)),
+    )
+
+
+def load_char(char: dict) -> Character:
+    """
+    Load a character from the database.
+    Use `parse_characters` for the PS2 API.
+    """
+    return Character(
+        char["name"],
+        char["xid"],
+        load_items(char["items"]),
+        char["outfit_tag"],
+        char["outfit_id"],
+        Factions(int(char["faction_id"])),
+        datetime.fromisoformat(char["last_login"]),
+        Servers(int(char["server_id"])),
+        char["battle_rank"],
     )
