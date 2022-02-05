@@ -20,7 +20,7 @@ class Item(Jsonable):
     @property
     def __key(self) -> tuple:
         """Get the attributes to hash by"""
-        return (self.id, self.uid)
+        return (self.id,)
 
     def __hash__(self) -> int:
         return hash(self.__key)
