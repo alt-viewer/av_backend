@@ -21,6 +21,6 @@ query = gql(
 async def log_task(client: AsyncClientSession) -> None:
     while True:
         res = await client.execute(query)
-        count = get_in(["data", "aggregateCharacter", "count"], res)
+        count = get_in(["aggregateCharacter", "count"], res)
         db_logger.info(f"{count or 0} characters recorded")
         await sleep(30)
