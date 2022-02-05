@@ -1,5 +1,5 @@
 from gql import gql
-from typing import Iterator
+from typing import Iterator, Iterable
 from operator import attrgetter, methodcaller
 import toolz.curried as toolz
 
@@ -18,6 +18,11 @@ mutation addCharacters($characters: [AddCharacterInput!]!) {
 }
 """
 )
+
+
+def zip_with(f, *iterables) -> Iterator:
+    return (f(*args) for args in zip(*iterables))
+
 
 # TODO
 # aggregate all items into one list
@@ -38,40 +43,41 @@ def aggregate_items(chars: list[Character]) -> set[Item]:
 
 def uids(items: list[dict]) -> list[str]:
     """Convert a list of items to their uids"""
-    return list(map(toolz.get_in(["uid"]), items))
+    return list(map(attrgetter("uid"), items))
 
 
-def upsertable(char: Character) -> dict:
+def upsertable(char: Character, item_ids: list[str]) -> dict:
     """
     Convert a character to its JSON form
     and convert all its items to UIDs.
     """
+    json_items = list(map(lambda i: {"id": i}, item_ids))
     return toolz.pipe(
         char,
         methodcaller("json"),
-        lambda j: {**j, "items": uids(j["items"])},
+        lambda j: {**j, "items": json_items},
     )
-
-
-@toolz.curry
-def _patch_items(db_items: list[Item], char: Character) -> Character:
-    return char.update(items=list(item_intersection(db_items, char.items)))
 
 
 async def patch_chars(client: GQLClient, chars: list[Character]) -> Iterator[dict]:
     """
     Upsert the items from each character, then construct the character's JSON.
-    Overall time complexity: O(n^k)
-    where k is the max number of items that a character may have.
 
     This is needed because nested upserts aren't possible with DGraph.
     Therefore, I have to create/update all items, then reference them
     in the character query.
     """
-    all_items = iter(aggregate_items(chars))  # O(2n)
-    db_items = await push_items(client, all_items)  # O(2n)
-    patched = map(_patch_items(db_items), chars)  # O(n^2)
-    return map(upsertable, patched)  # O(n^k)
+    # Get the set of unique items from the characters
+    char_items = list(map(attrgetter("items"), chars))
+    all_items = toolz.concat(char_items)
+    db_items = await push_items(client, all_items)  # Get the uids of the upserted items
+
+    # Replace each character's items with the uids for their items.
+    # Flipping because I want to get back the db items that intersect
+    item_inter = toolz.flip(item_intersection)(db_items)
+    patch_convert = toolz.compose(uids, item_inter)
+    patched_items = map(patch_convert, char_items)
+    return zip_with(upsertable, chars, patched_items)
 
 
 async def push_chars(client: GQLClient, chars: Iterator[Character]) -> None:
@@ -89,6 +95,6 @@ async def push_chars(client: GQLClient, chars: Iterator[Character]) -> None:
     await client.execute(
         query,
         variable_values={
-            "characters": list(patched),
+            "characters": patched,
         },
     )
