@@ -1,5 +1,5 @@
 type Character {
-  name: String! @search(by: [regexp])
+  name: String! @search(by: [regexp, hash])
   """
   The DGraph ID for the character
   """
