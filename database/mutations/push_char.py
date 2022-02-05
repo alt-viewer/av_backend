@@ -7,7 +7,7 @@ from entities.character import Character, Item
 from database.filter_new import new_chars
 from database.gql import GQLClient
 from converters import convert_json, item_intersection
-from database.push_items import push_items
+from database.mutations.push_items import push_items
 
 query = gql(
     """
