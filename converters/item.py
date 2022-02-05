@@ -1,5 +1,6 @@
 import toolz.curried as toolz
 from datetime import datetime
+from typing import Iterable
 
 from payloads import ItemObj
 from entities import Item
@@ -7,7 +8,7 @@ from entities import Item
 
 def load_item(i: dict) -> Item:
     """Load a single database item."""
-    return Item(i["xid"], datetime.fromisoformat(i["last_recorded"]))
+    return Item(i["xid"], datetime.fromisoformat(i["last_recorded"]), i["uid"])
 
 
 def load_items(items: list[dict]) -> list[Item]:
@@ -32,3 +33,9 @@ def parse_char_items(items: list[ItemObj]) -> list[Item]:
         toolz.map(lambda i: Item(i.item_id, now)),
         list,
     )
+
+
+def item_intersection(xs: Iterable[Item], ys: Iterable[Item]) -> set[Item]:
+    # Avoid reconstructing a set
+    as_set = xs if isinstance(xs, set) else set(xs)
+    return as_set.intersection(ys)
