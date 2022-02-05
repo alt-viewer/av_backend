@@ -23,7 +23,10 @@ mutation addItems($items: [AddItemInput!]!) {
 
 async def push_items(client: GQLClient, items: Iterator[Item]) -> list[Item]:
     """Add/update the given items in the database and return {uid, xid, last_recorded}"""
-    res = await client.execute(query, variable_values={"items": convert_json(items)})
+    unique_items = iter(set(items))
+    res = await client.execute(
+        query, variable_values={"items": convert_json(unique_items)}
+    )
     return toolz.pipe(
         res,
         toolz.get_in(["addItem", "item"]),
