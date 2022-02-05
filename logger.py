@@ -1,7 +1,7 @@
 import logging
 from functools import wraps
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.WARNING)
 global_logger = logging.getLogger("global_logger")
 
 

@@ -7,6 +7,7 @@ from queries.api_query import query
 from entities import Factions, Item, Character, Servers
 from payloads import CharacterPayload, ItemObj
 from queries.batch import with_page
+from converters import parse_characters
 
 DEFAULT_FIELDS = [
     "items",
@@ -25,60 +26,6 @@ DEFAULT_JOINS = [
     "world",
     "item",
 ]
-
-
-def parse_timestamp(t: str) -> datetime:
-    # The API returns an invalid fffff... portion
-    # See: https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat
-    return datetime.fromisoformat(t[:-2])
-
-
-def parse_items(items: list[ItemObj]) -> list[Item]:
-    now = datetime.now()
-    return toolz.pipe(
-        items,
-        # account_level might not exist but it could be false if it exists
-        toolz.filter(lambda i: i.account_level),
-        toolz.map(lambda i: Item(i.item_id, now)),
-        list,
-    )
-
-
-def cast_char(char_data: dict) -> dict:
-    """Cast the types of the character response to the appropriate types"""
-    return {
-        **char_data,
-        # Explicit conversion needed since Enum doesn't do it
-        "faction_id": int(char_data["faction_id"]),
-        "world_id": int(char_data["world_id"]),
-    }
-
-
-def make_char(char: CharacterPayload) -> Character:
-    if not char.items:
-        raise ValueError("Character lacks items")
-
-    return Character(
-        char.name.first,
-        char.character_id,
-        parse_items(char.items),
-        char.outfit.alias if char.outfit else None,
-        char.outfit.outfit_id if char.outfit else None,
-        char.faction_id,
-        parse_timestamp(char.times.last_login_date),
-        char.world_id,
-        char.battle_rank.value,
-    )
-
-
-def parse_characters(data: dict) -> Iterator[Character]:
-    return toolz.pipe(
-        data,
-        toolz.get_in(["character_list"]),
-        # Ignore characters that have no items
-        toolz.filter(toolz.get_in(["items"])),
-        toolz.map(toolz.compose(make_char, lambda c: CharacterPayload(**c), cast_char)),
-    )
 
 
 def make_params(fields: list[str], joins: list[str], character_id: str) -> dict:
@@ -101,9 +48,9 @@ async def get_characters(
     joined = ",".join(map(str, ids))
     url = query("character", params=make_params(fs, js, joined))
     async with session.get(url) as res:
-        json = await res.json()
         if not res.ok:
             raise RuntimeError(res.reason)
+        json = await res.json()
         return parse_characters(json)
 
 
