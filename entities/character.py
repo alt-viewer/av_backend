@@ -44,7 +44,7 @@ class Character(Jsonable):
         last_login: datetime = None,
         server_id: Servers = None,
         battle_rank: int = None,
-    ) -> Character:
+    ) -> "Character":
         """Create a new character with the union of the new and old attributes"""
         return Character(
             name or self.name,
