@@ -1,5 +1,9 @@
 import toolz.curried as toolz
 from datetime import datetime
+
+# datetime.fromisoformat doesn't play nicely with DGraph's
+# RFC datetimes
+from dateutil.parser import parse as parse_rfc
 from typing import Iterable
 
 from payloads import ItemObj
@@ -8,7 +12,7 @@ from entities import Item
 
 def load_item(i: dict) -> Item:
     """Load a single database item."""
-    return Item(i["xid"], datetime.fromisoformat(i["last_recorded"]), i["uid"])
+    return Item(i["xid"], parse_rfc(i["last_recorded"]), i.get("id"))
 
 
 def load_items(items: list[dict]) -> list[Item]:
