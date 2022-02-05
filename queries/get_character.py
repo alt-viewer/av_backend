@@ -48,9 +48,9 @@ async def get_characters(
     joined = ",".join(map(str, ids))
     url = query("character", params=make_params(fs, js, joined))
     async with session.get(url) as res:
-        json = await res.json()
         if not res.ok:
             raise RuntimeError(res.reason)
+        json = await res.json()
         return parse_characters(json)
 
 
