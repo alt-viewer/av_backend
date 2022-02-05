@@ -24,18 +24,6 @@ def zip_with(f, *iterables) -> Iterator:
     return (f(*args) for args in zip(*iterables))
 
 
-# TODO
-# aggregate all items into one list
-# push them to the database
-# for each character:
-#   char.items = {i.id | i <- res_items, i in char.items}
-# use sets ^
-
-# I need a fast way to get the intersection of two sets of items
-# using a certain attribute of each item
-# E.G {x | x <- items1, y <- items2, x.xid == y.xid}
-
-
 def aggregate_items(chars: list[Character]) -> set[Item]:
     """Get the set of items from a list of characters."""
     return set(toolz.mapcat(attrgetter("items"), chars))
