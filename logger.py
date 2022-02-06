@@ -1,8 +1,13 @@
 import logging
 from functools import wraps
+from typing import Callable, TypeVar, Iterable, Iterator
+import toolz.curried as toolz
 
-logging.basicConfig(level=logging.WARNING)
-global_logger = logging.getLogger("global_logger")
+
+def set_up_loggers(loggers: dict[str, int]) -> None:
+    for name, level in loggers.items():
+        l = logging.getLogger(name)
+        l.setLevel(level)
 
 
 def with_logger(
@@ -23,3 +28,36 @@ def with_logger(
         return inner
 
     return outer
+
+
+T = TypeVar("T")
+
+
+def log_filter(
+    logger: logging.Logger,
+    pred: Callable[[T], bool],
+    format: str = "Ignoring {item} due to failing {predicate}",
+) -> Callable[[Iterable[T]], Iterator[T]]:
+    """Filter the list and log any items that fail the predicate"""
+
+    def wrapper(item: T) -> bool:
+        res = pred(item)
+        if not res:
+            logger.debug(format.format(item=item, predicate=pred))
+        return res
+
+    return toolz.filter(wrapper)
+
+
+logging.basicConfig(level=logging.WARNING)
+global_logger = logging.getLogger("global_logger")
+
+# Set up the named loggers
+LOGGER_SETTINGS = {
+    "character": logging.INFO,
+    "character queue": logging.INFO,
+    "db": logging.INFO,
+    "websocket": logging.INFO,
+}
+
+set_up_loggers(LOGGER_SETTINGS)

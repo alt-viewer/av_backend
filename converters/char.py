@@ -1,10 +1,14 @@
 from datetime import datetime
 from typing import Iterator
 import toolz.curried as toolz
+import logging
 
 from payloads import CharacterPayload
 from entities import Character, Factions, Servers
 from converters.item import parse_char_items, load_items
+from logger import log_filter
+
+char_logger = logging.getLogger("character")
 
 
 def parse_timestamp(t: str) -> datetime:
@@ -53,7 +57,7 @@ def parse_characters(data: dict) -> Iterator[Character]:
         data,
         toolz.get_in(["character_list"]),
         # Ignore characters that have no items or server
-        toolz.filter(has_all(["items", "world_id"])),
+        log_filter(char_logger, has_all(["items", "world_id"])),
         toolz.map(toolz.compose(make_char, lambda c: CharacterPayload(**c), cast_char)),
     )
 

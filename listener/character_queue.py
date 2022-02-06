@@ -8,7 +8,6 @@ from queries import with_page
 from entities import Character
 
 logger = logging.getLogger("character queue")
-logger.setLevel(logging.DEBUG)
 
 char_lock = Lock()
 

@@ -25,9 +25,7 @@ PAYLOAD = {
 }
 
 socket_logger = logging.getLogger("websocket")
-socket_logger.setLevel(logging.INFO)
-character_logger = logging.getLogger("characters")
-character_logger.setLevel(logging.INFO)
+character_logger = logging.getLogger("character")
 
 
 def is_login_event(payload: dict) -> bool:

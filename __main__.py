@@ -1,7 +1,6 @@
 import aiohttp
 import asyncio
 import toolz.curried
-from logging import getLogger
 import sys
 import gql
 from toolz import curry
