@@ -42,13 +42,18 @@ def make_char(char: CharacterPayload) -> Character:
     )
 
 
+@toolz.curry
+def has_all(required: list[str], d: dict) -> bool:
+    return all(k in d for k in required)
+
+
 def parse_characters(data: dict) -> Iterator[Character]:
     """Convert many characters from a PS2 API response"""
     return toolz.pipe(
         data,
         toolz.get_in(["character_list"]),
-        # Ignore characters that have no items
-        toolz.filter(toolz.get_in(["items"])),
+        # Ignore characters that have no items or server
+        toolz.filter(has_all(["items", "world_id"])),
         toolz.map(toolz.compose(make_char, lambda c: CharacterPayload(**c), cast_char)),
     )
 
