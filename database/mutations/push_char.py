@@ -4,7 +4,6 @@ from operator import attrgetter, methodcaller
 import toolz.curried as toolz
 
 from entities.character import Character, Item
-from database.filter_new import new_chars
 from database.gql import GQLClient
 from converters import convert_json, item_intersection
 from database.mutations.push_items import push_items

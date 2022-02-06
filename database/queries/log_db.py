@@ -5,7 +5,6 @@ import logging
 from toolz import get_in
 
 db_logger = logging.getLogger("db")
-db_logger.setLevel(logging.INFO)
 
 query = gql(
     """
