@@ -51,11 +51,10 @@ def has_all(required: list[str], d: dict) -> bool:
     return all(k in d for k in required)
 
 
-def parse_characters(data: dict) -> Iterator[Character]:
+def parse_characters(raw_chars: list[dict]) -> Iterator[Character]:
     """Convert many characters from a PS2 API response"""
     return toolz.pipe(
-        data,
-        toolz.get_in(["character_list"]),
+        raw_chars,
         # Ignore characters that have no items or server
         log_filter(char_logger, has_all(["items", "world_id"])),
         toolz.map(toolz.compose(make_char, lambda c: CharacterPayload(**c), cast_char)),
