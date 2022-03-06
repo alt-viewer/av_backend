@@ -68,10 +68,11 @@ class DBCharacter(Character):
         return {**super().json(), "peers": self.peers, "eliminated": self.eliminated}
 
 
-class MatchChar(BaseModel):
+@dataclass
+class MatchChar:
     """A partial Character used for comparing characters."""
 
-    uid: int
+    uid: str
     last_login: datetime
     items: list[Item]
     eliminated: list[int]
