@@ -2,6 +2,7 @@ import logging
 from functools import wraps
 from typing import Callable, TypeVar, Iterable, Iterator
 import toolz.curried as toolz
+from asyncio import TimeoutError as AsyncTimeout
 
 
 def set_up_loggers(loggers: dict[str, int]) -> None:
@@ -47,6 +48,23 @@ def log_filter(
         return res
 
     return toolz.filter(wrapper)
+
+
+def with_retry(
+    logger: logging.Logger,
+    n: int = 5,
+):
+    def wrapper(func):
+        async def inner(*args, **kwargs):
+            for try_ in range(n):
+                try:
+                    return await func(*args, **kwargs)
+                except AsyncTimeout:
+                    logger.debug(f"Failed {func} {try_+1} times. Retrying...")
+
+        return inner
+
+    return wrapper
 
 
 logging.basicConfig(level=logging.WARNING)
