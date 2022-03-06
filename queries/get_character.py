@@ -36,13 +36,12 @@ def make_params(fields: list[str], joins: list[str], character_id: str) -> dict:
     }
 
 
-@toolz.curry
-async def get_characters(
+async def get_raw_chars(
     session: ClientSession,
     ids: Iterator[int],
     fields: list[str] = None,
     joins: list[str] = None,
-) -> Iterator[Character]:
+) -> list[dict]:
     fs = fields or DEFAULT_FIELDS
     js = joins or DEFAULT_JOINS
     joined = ",".join(map(str, ids))
@@ -51,7 +50,18 @@ async def get_characters(
         if not res.ok:
             raise RuntimeError(res.reason)
         json = await res.json()
-        return parse_characters(json)
+    return json["character_list"]
+
+
+@toolz.curry
+async def get_characters(
+    session: ClientSession,
+    ids: Iterator[int],
+    fields: list[str] = None,
+    joins: list[str] = None,
+) -> Iterator[Character]:
+    json = await get_raw_chars(session, ids)
+    return parse_characters(json)
 
 
 paged_get_chars = lambda session: with_page(get_characters(session))
