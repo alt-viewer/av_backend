@@ -23,9 +23,9 @@ def to_match_char(c: Character) -> MatchCharDict:
 
 @toolz.curry
 async def match_of_page(
-    session: GQLClient, char: Character, offset: int
+    session: GQLClient, char: MatchCharDict, offset: int
 ) -> list[Match]:
-    return search(char.json(), await get_match_char_page(session, PAGE_SIZE, offset))
+    return search(char, await get_match_char_page(session, PAGE_SIZE, offset))
 
 
 async def find_matches(session: GQLClient, char: Character) -> Iterable[Match]:
@@ -35,4 +35,5 @@ async def find_matches(session: GQLClient, char: Character) -> Iterable[Match]:
 
     # Spawn page requests and pipe the pages into the matching function
     offsets = range(0, n, PAGE_SIZE)
-    return await gathercat(match_of_page(session, char), offsets)
+    as_mc = to_match_char(char)
+    return await gathercat(match_of_page(session, as_mc), offsets)
