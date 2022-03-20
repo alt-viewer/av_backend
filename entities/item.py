@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, TypeAlias
 
 from entities.abstracts.jsonable import Jsonable
 
@@ -29,3 +29,12 @@ class Item(Jsonable):
         if not isinstance(other, Item):
             return NotImplemented
         return self.__key == other.__key
+
+
+# Necessary because working with Python classes
+# is very slow.
+# Shape: {
+#     xid: str (PS2 item ID),
+#     last_recorded: str (datetime string)
+# }
+ItemDict: TypeAlias = dict

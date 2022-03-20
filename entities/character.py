@@ -1,15 +1,17 @@
 from dataclasses import dataclass
 from datetime import datetime
 from pydantic import BaseModel
+from typing import TypeAlias
 
 from entities.faction import Factions
-from entities.item import Item
+from entities.item import Item, ItemDict
 from entities.server import Servers
 from entities.abstracts.jsonable import Jsonable
 
 
 @dataclass
 class Character(Jsonable):
+    # Census-side
     name: str
     id: int
     items: list[Item]
@@ -19,6 +21,9 @@ class Character(Jsonable):
     last_login: datetime
     server_id: Servers
     battle_rank: int
+
+    # Internal-side
+    uid: str | None
 
     def json(self) -> dict:
         return {
@@ -31,6 +36,7 @@ class Character(Jsonable):
             "battle_rank": self.battle_rank,
             "last_login": self.last_login.isoformat(),
             "items": list(map(lambda i: i.json(), self.items)),
+            "uid": self.uid,
         }
 
     def update(
@@ -44,6 +50,7 @@ class Character(Jsonable):
         last_login: datetime = None,
         server_id: Servers = None,
         battle_rank: int = None,
+        uid: str = None,
     ) -> "Character":
         """Create a new character with the union of the new and old attributes"""
         return Character(
@@ -56,6 +63,7 @@ class Character(Jsonable):
             last_login or self.last_login,
             server_id or self.server_id,
             battle_rank or self.battle_rank,
+            uid or self.uid,
         )
 
 
@@ -75,4 +83,15 @@ class MatchChar:
     uid: str
     last_login: datetime
     items: list[Item]
-    eliminated: list[int]
+    eliminated: list[str]
+
+
+# Necessary because working with Python classes
+# is extremely slow.
+# Shape: {
+#     id: str  (Character UID),
+#     last_login: str (datetime string),
+#     items: list[ItemDict],
+#     eliminated: list[str]  (Character UIDs)
+# }
+MatchCharDict: TypeAlias = dict
