@@ -24,7 +24,7 @@ def to_match_char(c: Character) -> MatchCharDict:
 @toolz.curry
 async def match_of_page(
     session: GQLClient, char: MatchCharDict, offset: int
-) -> list[Match]:
+) -> Iterable[Match]:
     return search(char, await get_match_char_page(session, PAGE_SIZE, offset))
 
 
