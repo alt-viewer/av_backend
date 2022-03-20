@@ -7,6 +7,7 @@ from entities.character import Character, Item
 from database.gql import GQLClient
 from converters import convert_json, item_intersection
 from database.mutations.push_items import push_items
+from eggs import omit
 
 query = gql(
     """
@@ -17,11 +18,6 @@ mutation addCharacters($characters: [AddCharacterInput!]!) {
 }
 """
 )
-
-
-@toolz.curry
-def omit(keys: Container[Hashable], dict) -> dict:
-    return toolz.keyfilter(lambda k: k not in keys, dict)
 
 
 def zip_with(f, *iterables) -> Iterator:

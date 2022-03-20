@@ -1,19 +1,24 @@
 from asyncio import gather
 import toolz.curried as toolz
 from typing import Iterable, Awaitable
+from operator import attrgetter
 
 from database import count, GQLClient, get_match_char_page
 from entities import Character, Match, NodeTypes, MatchCharDict
 from matching.compare import search
 from queries import gathercat
+from eggs import pick, replace_with
 
 PAGE_SIZE = 10000
 
 
 def to_match_char(c: Character) -> MatchCharDict:
-    WHITELIST = ["last_login", "items", "eliminated"]
-    uid = c.uid
-    return toolz.keyfilter(lambda k: k in WHITELIST, c.json()) | {"uid": uid}
+    return toolz.pipe(
+        c,
+        Character.json,
+        pick(["uid", "last_login", "items", "eliminated"]),
+        replace_with("uid", "id", toolz.identity),
+    )
 
 
 @toolz.curry
