@@ -1,8 +1,10 @@
 from gql.transport.aiohttp import AIOHTTPTransport
 from gql.client import AsyncClientSession, Client
+from gql import gql
 from aiohttp import ClientSession
-from typing import TypeAlias
+from typing import TypeAlias, TypeVar, Callable, Iterable
 from contextlib import asynccontextmanager
+from re import compile
 
 GQLClient: TypeAlias = AsyncClientSession
 
@@ -36,3 +38,44 @@ async def get_sessions(url: str):
         await asession.close()
         if gsession.transport:
             await gsession.transport.close()
+
+
+# Gets the query type from query literal
+query_name = compile("(query|get|aggregate|add|delete|update)[A-Z]\w+")
+Converted = TypeVar("Converted")
+
+
+async def query(
+    session: GQLClient,
+    query_literal: str,
+    converter: Callable[[dict], Converted],
+    variables: dict = None,
+    key: str = None,
+) -> Iterable[Converted]:
+    """
+    Convenience function around `GQLClient.execute`.
+
+    Args:
+        query_literal:
+            The GraphQL query.
+        converter:
+            A function that transforms a result dict into the desired type.
+            This will be applied to each result of the query.
+        variables:
+            The variables to insert into the query.
+        key:
+            The key to fetch the data from in the response (E.G aggregateCharacter or queryItem).
+            If this is not passed, it will be determined automatically. Pass this for extra performance.
+    """
+    query_vars = variables or {}
+    # Find the name of the query
+    if key:
+        data_key = key
+    else:
+        match = query_name.search(query_literal)
+        if not match:
+            raise ValueError("Invalid query")
+        dat_key = match.group(0)
+
+    res = await session.execute(gql(query_literal), variable_values=query_vars)
+    return map(converter, res[data_key])
