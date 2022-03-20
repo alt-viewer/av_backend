@@ -1,6 +1,6 @@
 from matching.find import find_matches
 from matching.compare import compare, search, pair_chars
-from partition import group
+from matching.partition import group
 
 __all__ = [
     "find_matches",
