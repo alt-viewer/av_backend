@@ -7,10 +7,11 @@ from entities.faction import Factions
 from entities.item import Item, ItemDict
 from entities.server import Servers
 from entities.abstracts.jsonable import Jsonable
+from entities.abstracts.inventory import HasInventory
 
 
 @dataclass
-class Character(Jsonable):
+class Character(Jsonable, HasInventory):
     # Census-side
     name: str
     id: int
@@ -65,6 +66,41 @@ class Character(Jsonable):
             battle_rank or self.battle_rank,
             uid or self.uid,
         )
+
+    def __str__(self) -> str:
+        return f"""
+        Character(
+            name={self.name},
+            xid={self.id},
+            items={self._hide_items()},
+            outfit_tag={self.outfit_tag},
+            outfit_id={self.outfit_id},
+            faction_id={self.faction_id},
+            last_login={self.last_login},
+            server_id={self.server_id},
+            battle_rank={self.battle_rank},
+            uid={self.uid}
+        )
+        """
+
+    def __repr__(self) -> str:
+        return f"""
+        Character(
+            name={self.name},
+            xid={self.id},
+            items={self.items},
+            outfit_tag={self.outfit_tag},
+            outfit_id={self.outfit_id},
+            faction_id={self.faction_id},
+            last_login={self.last_login},
+            server_id={self.server_id},
+            battle_rank={self.battle_rank},
+            uid={self.uid}
+        )
+        """
+
+    def _hide_items(self) -> str:
+        return f"<{len(self.items)} items>"
 
 
 @dataclass
