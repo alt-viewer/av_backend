@@ -43,6 +43,7 @@ def make_char(char: CharacterPayload) -> Character:
         parse_timestamp(char.times.last_login_date),
         char.world_id,
         char.battle_rank.value,
+        None,
     )
 
 
@@ -76,4 +77,5 @@ def load_char(char: dict) -> Character:
         datetime.fromisoformat(char["last_login"]),
         Servers(int(char["server_id"])),
         char["battle_rank"],
+        char["uid"],
     )
