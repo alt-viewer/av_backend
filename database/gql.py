@@ -75,7 +75,7 @@ async def query(
         match = query_name.search(query_literal)
         if not match:
             raise ValueError("Invalid query")
-        dat_key = match.group(0)
+        data_key = match.group(0)
 
     res = await session.execute(gql(query_literal), variable_values=query_vars)
     return map(converter, res[data_key])
