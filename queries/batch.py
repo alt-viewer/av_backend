@@ -1,18 +1,18 @@
-from typing import Callable, TypeVar, Sequence, Awaitable, Iterator, Any
+from typing import Callable, TypeVar, Sequence, Awaitable, Iterator, Any, Iterable
 from functools import wraps
 from asyncio import gather, Future
 import toolz.curried as toolz
 
+T = TypeVar("T")
 ReturnType = TypeVar("ReturnType")
 
 
 async def gathercat(
-    f: Callable[[Sequence], Awaitable[list[list[ReturnType]]]],
-    pages: Iterator[Sequence],
-) -> Awaitable[Iterator[ReturnType]]:
-    """Map an async function to a set of pages, then join each
-    page of results into one list of results"""
-    results = await gather(*map(f, pages))
+    f: Callable[[T], Awaitable[Iterable[ReturnType]]],
+    xs: Iterable[T],
+) -> Iterable[ReturnType]:
+    """Map an async function to an iterable and concat the results."""
+    results = await gather(*map(f, xs))
     return toolz.concat(results)
 
 

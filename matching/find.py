@@ -5,6 +5,7 @@ from typing import Iterable, Awaitable
 from database import count, GQLClient, get_match_char_page
 from entities import Character, Match, NodeTypes, MatchCharDict
 from matching.compare import search
+from queries import gathercat
 
 PAGE_SIZE = 10000
 
@@ -22,11 +23,11 @@ async def match_of_page(
     return search(char.json(), await get_match_char_page(session, PAGE_SIZE, offset))
 
 
-async def find_matches(session: GQLClient, char: Character) -> list[Match]:
+async def find_matches(session: GQLClient, char: Character) -> Iterable[Match]:
     # Doing an extra query has a cost but enables
     # requesting the pages in parallel
     n = await count(session, NodeTypes.CHARACTER)
 
     # Spawn page requests and pipe the pages into the matching function
     offsets = range(0, n, PAGE_SIZE)
-    return toolz.concat(await gather(*map(match_of_page(session, char), offsets)))
+    return await gathercat(match_of_page(session, char), offsets)
