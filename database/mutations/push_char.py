@@ -1,5 +1,5 @@
 from gql import gql
-from typing import Iterator, Iterable
+from typing import Iterator, Iterable, Container, Hashable
 from operator import attrgetter, methodcaller
 import toolz.curried as toolz
 
@@ -17,6 +17,11 @@ mutation addCharacters($characters: [AddCharacterInput!]!) {
 }
 """
 )
+
+
+@toolz.curry
+def omit(keys: Container[Hashable], dict) -> dict:
+    return toolz.keyfilter(lambda k: k not in keys, dict)
 
 
 def zip_with(f, *iterables) -> Iterator:
@@ -42,6 +47,8 @@ def upsertable(char: Character, item_ids: list[str]) -> dict:
     return toolz.pipe(
         char,
         methodcaller("json"),
+        # Ignore the UID member of the character because it will be unset
+        omit(["uid"]),
         lambda j: {**j, "items": json_items},
     )
 
