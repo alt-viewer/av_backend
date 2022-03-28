@@ -1,9 +1,10 @@
 from gql.transport.aiohttp import AIOHTTPTransport
 from gql.client import AsyncClientSession, Client
 from gql import gql
+from gql.transport.aiohttp import AIOHTTPTransport
 from aiohttp import ClientSession
 from typing import TypeAlias, TypeVar, Callable, Iterable
-from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager, AsyncExitStack
 from re import compile
 
 GQLClient: TypeAlias = AsyncClientSession
@@ -29,15 +30,11 @@ async def get_sessions(url: str):
     Create an AIOHTTP session and a GQL client.
     Returns (AIOHTTP session, GQL session)
     """
-    try:
-        asession = ClientSession()
-        transport = GQLTransport(url, client_session=asession)
-        gsession = Client(transport=transport)
-        yield (asession, gsession)
-    finally:
-        await asession.close()
-        if gsession.transport:
-            await gsession.transport.close()
+    async with AsyncExitStack() as stack:
+        transport = AIOHTTPTransport(url)
+        gsession = await stack.enter_async_context(Client(transport=transport))
+        # Get the AIOHTTP session from the gql.Client's transport
+        yield (gsession.transport.session, gsession)
 
 
 # Gets the query type from query literal
