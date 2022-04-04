@@ -33,6 +33,7 @@ def make_params(fields: list[str], joins: list[str], character_id: str) -> dict:
         "character_id": character_id,
         "c:show": ",".join(fields),
         "c:resolve": ",".join(joins),
+        "c:lang": "en",
     }
 
 
