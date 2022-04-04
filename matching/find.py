@@ -1,3 +1,5 @@
+"""The IO shell around `matching.compare.search`"""
+
 from asyncio import gather
 import toolz.curried as toolz
 from typing import Iterable, Awaitable
@@ -29,6 +31,9 @@ async def match_of_page(
 
 
 async def find_matches(session: GQLClient, char: Character) -> Iterable[Match]:
+    """
+    Search for matches for a character in the database
+    """
     # Doing an extra query has a cost but enables
     # requesting the pages in parallel
     n = await count(session, NodeTypes.CHARACTER)
