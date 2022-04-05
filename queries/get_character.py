@@ -24,15 +24,20 @@ DEFAULT_FIELDS = [
 DEFAULT_JOINS = [
     "outfit",
     "world",
-    "item",
 ]
 
+# Joins the items with keys: item_id, account_level, faction_info { faction_id }
+DEFAULT_ITEM_QUERY = "characters_item^inject_at:items^show:item_id'account_level^list:1(item^show:faction_id^inject_at:faction_info)"
 
-def make_params(fields: list[str], joins: list[str], character_id: str) -> dict:
+
+def make_params(
+    fields: list[str], joins: list[str], item_query: str, character_id: str
+) -> dict:
     return {
         "character_id": character_id,
         "c:show": ",".join(fields),
         "c:resolve": ",".join(joins),
+        "c:join": item_query,
         "c:lang": "en",
     }
 
@@ -42,11 +47,13 @@ async def get_raw_chars(
     ids: Iterator[int],
     fields: list[str] = None,
     joins: list[str] = None,
+    item_query: str = None,
 ) -> list[dict]:
     fs = fields or DEFAULT_FIELDS
     js = joins or DEFAULT_JOINS
+    iq = item_query or DEFAULT_ITEM_QUERY
     joined = ",".join(map(str, ids))
-    url = query("character", params=make_params(fs, js, joined))
+    url = query("character", params=make_params(fs, js, iq, joined))
     async with session.get(url) as res:
         if not res.ok:
             raise RuntimeError(res.reason)

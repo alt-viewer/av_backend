@@ -10,6 +10,19 @@ from payloads import ItemObj
 from entities import Item
 
 
+def is_neutral(item: ItemObj) -> bool:
+    """Check if an item is of a neutral faction"""
+    if not item.faction_info:
+        return True
+    ifaction = item.faction_info.faction_id
+    return ifaction == 0 or ifaction == None
+
+
+def is_account_wide(item: ItemObj) -> bool:
+    """Check if an item is owned by the account rather than the character"""
+    return bool(item.account_level)
+
+
 def load_item(i: dict) -> Item:
     """Load a single database item."""
     return Item(i["xid"], parse_rfc(i["last_recorded"]), i.get("id"))
@@ -32,8 +45,8 @@ def parse_char_items(items: list[ItemObj]) -> list[Item]:
     now = datetime.now()
     return toolz.pipe(
         items,
-        # account_level might not exist but it could be false if it exists
-        toolz.filter(lambda i: i.account_level),
+        # Remove faction-specific items and character-level items
+        toolz.filter(lambda i: is_neutral(i) and is_account_wide(i)),
         toolz.map(lambda i: Item(i.item_id, now)),
         list,
     )

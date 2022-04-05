@@ -4,9 +4,15 @@ from datetime import datetime
 from entities import Servers, Factions
 
 
+class FactionInfo(BaseModel):
+    faction_id: int | None
+
+
 class ItemObj(BaseModel):
     item_id: int
     account_level: bool | None
+    stack_size: int | None
+    faction_info: FactionInfo | None
 
 
 class OutfitObj(BaseModel):
