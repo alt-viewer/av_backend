@@ -30,6 +30,7 @@ async def match_of_page(
     return search(char, await get_match_char_page(session, PAGE_SIZE, offset))
 
 
+@toolz.curry
 async def find_matches(session: GQLClient, char: Character) -> Iterable[Match]:
     """
     Search for matches for a character in the database
