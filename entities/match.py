@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Iterable
 
 from entities.character import MatchCharDict
 from eggs import replace_with
@@ -17,4 +18,8 @@ class Match(HasInventory):
         return f"Match(confidence={self.confidence}, peers={self.peers})"
 
     def _hide_items(self) -> str:
-        return str(map(replace_with("items", "item_count", len), self.peers))
+        return str(list(map(replace_with("items", "item_count", len), self.peers)))
+
+
+def show_matches(ms: Iterable[Match]) -> str:
+    return "[" + ",\n".join(map(str, ms)) + "]"
