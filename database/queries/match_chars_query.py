@@ -8,6 +8,7 @@ template = """
     query get_match_chars($first: Int, $offset: Int) {
         queryCharacter(first: $first, offset: $offset) {
             id,
+            xid,
             last_login,
             items {
                 xid,

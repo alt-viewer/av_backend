@@ -18,7 +18,7 @@ def to_match_char(c: Character) -> MatchCharDict:
     return toolz.pipe(
         c,
         Character.json,
-        pick(["uid", "last_login", "items", "eliminated"]),
+        pick(["uid", "xid", "last_login", "items", "eliminated"]),
         replace_with("uid", "id", toolz.identity),
     )
 

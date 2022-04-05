@@ -5,7 +5,7 @@ import toolz.curried as toolz
 from matching.partition import group
 from entities import MatchCharDict, Match
 
-THRESHOLD = 80
+THRESHOLD = 75
 
 
 def set_ratio(xs: set, ys: set) -> float:
@@ -32,7 +32,7 @@ def pair_chars(
     return combinations(chars, 2)
 
 
-def search(c: MatchCharDict, cs: list[MatchCharDict]) -> list[Match]:
+def search(c: MatchCharDict, cs: list[MatchCharDict]) -> Iterable[Match]:
     """
     Find all matches for `c` in `cs`.
 
@@ -48,8 +48,8 @@ def search(c: MatchCharDict, cs: list[MatchCharDict]) -> list[Match]:
     # Linear search through the remaining characters
     passed: list[Match] = []
     for c2 in chosen:
-        # Skip the target
-        if c2["id"] == c["id"]:
+        # Don't compare the target to itself
+        if c2["xid"] == c["xid"]:
             continue
 
         ratio = compare(c, c2)
