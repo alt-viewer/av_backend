@@ -1,5 +1,5 @@
 from gql import gql
-from typing import Iterator, Iterable, Container, Hashable
+from typing import Iterable, Iterable, Container, Hashable
 from operator import attrgetter, methodcaller
 import toolz.curried as toolz
 
@@ -20,7 +20,7 @@ mutation addCharacters($characters: [AddCharacterInput!]!) {
 )
 
 
-def zip_with(f, *iterables) -> Iterator:
+def zip_with(f, *iterables) -> Iterable:
     return (f(*args) for args in zip(*iterables))
 
 
@@ -49,7 +49,7 @@ def upsertable(char: Character, item_ids: list[str]) -> dict:
     )
 
 
-async def patch_chars(client: GQLClient, chars: list[Character]) -> Iterator[dict]:
+async def patch_chars(client: GQLClient, chars: list[Character]) -> Iterable[dict]:
     """
     Upsert the items from each character, then construct the character's JSON.
 
@@ -70,7 +70,8 @@ async def patch_chars(client: GQLClient, chars: list[Character]) -> Iterator[dic
     return zip_with(upsertable, chars, patched_items)
 
 
-async def push_chars(client: GQLClient, chars: Iterator[Character]) -> None:
+@toolz.curry
+async def push_chars(client: GQLClient, chars: Iterable[Character]) -> None:
     """
     Upsert the characters into the database. This is fairly expensive
     due to 2 queries and a lot of conversion. See patch_chars about complexity.
