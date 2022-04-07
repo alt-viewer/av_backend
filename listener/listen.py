@@ -8,8 +8,8 @@ from typing import Callable, Awaitable
 
 from queries import query
 from entities import Character
-from payloads import LoginPayload
-from listener.character_queue import CharacterQueue
+from listener.queue import RequestQueue
+from listener.dispatch import Dispatch
 
 PAYLOAD = {
     "service": "event",
@@ -28,18 +28,14 @@ socket_logger = logging.getLogger("websocket")
 character_logger = logging.getLogger("character")
 
 
-def is_login_event(payload: dict) -> bool:
-    return payload.get("event_name") == "PlayerLogin"
-
-
 class LoginListener:
-    def __init__(self, session: aiohttp.ClientSession, queue: "CharacterQueue"):
+    def __init__(self, session: aiohttp.ClientSession, dispatch: Dispatch):
         """
         func is an async function that will be called on LoginPayloads.
         It should perform a side effect on the data.
         """
         self.session = session
-        self.queue = queue
+        self.dispatch = dispatch
         self.run = True
 
     async def listen(self):
@@ -59,14 +55,7 @@ class LoginListener:
                 if not payload:
                     continue
 
-                if is_login_event(payload):
-                    self.queue_char(LoginPayload(**payload))
-
-    def queue_char(self, payload: LoginPayload) -> None:
-        """Add a character to the queue"""
-        id = payload.character_id
-        asyncio.create_task(self.queue.add(id))
-        character_logger.debug(f"Queued character {id}")
+                self.dispatch(res)
 
     async def stop(self):
         self.run = False
