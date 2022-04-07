@@ -1,7 +1,7 @@
 from aiohttp import ClientSession
 import toolz.curried as toolz
 from datetime import datetime
-from typing import Iterator
+from typing import Iterable
 
 from queries.api_query import query
 from entities import Factions, Item, Character, Servers
@@ -44,7 +44,7 @@ def make_params(
 
 async def get_raw_chars(
     session: ClientSession,
-    ids: Iterator[int],
+    ids: Iterable[int],
     fields: list[str] = None,
     joins: list[str] = None,
     item_query: str = None,
@@ -64,10 +64,10 @@ async def get_raw_chars(
 @toolz.curry
 async def get_characters(
     session: ClientSession,
-    ids: Iterator[int],
+    ids: Iterable[int],
     fields: list[str] = None,
     joins: list[str] = None,
-) -> Iterator[Character]:
+) -> Iterable[Character]:
     json = await get_raw_chars(session, ids)
     return parse_characters(json)
 
