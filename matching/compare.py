@@ -5,7 +5,7 @@ import toolz.curried as toolz
 from matching.partition import group
 from entities import MatchCharDict, Match
 
-THRESHOLD = 75
+THRESHOLD = 70
 
 
 def set_ratio(xs: set, ys: set) -> float:
