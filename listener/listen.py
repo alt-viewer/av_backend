@@ -11,6 +11,7 @@ from entities import Character
 from listener.queue import RequestQueue
 from listener.dispatch import Dispatch
 
+# NOTE: to listen to items, `logicalAndCharactersWithWorlds` should be `True` and `characters` should be `["all"]`
 PAYLOAD = {
     "service": "event",
     "action": "subscribe",
@@ -21,7 +22,9 @@ PAYLOAD = {
         "17",  # Emerald
         "40",  # Soltech
     ],
-    "eventNames": ["PlayerLogin"],
+    "eventNames": [
+        "PlayerLogin",
+    ],
 }
 
 socket_logger = logging.getLogger("websocket")
