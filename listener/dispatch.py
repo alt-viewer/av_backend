@@ -2,6 +2,7 @@ from asyncio import create_task
 import logging
 from typing import Callable, TypeAlias
 from aiohttp import ClientSession
+import toolz.curried as toolz
 
 from listener.queue import RequestQueue
 from queries import get_characters, with_page
@@ -13,7 +14,8 @@ Dispatch: TypeAlias = Callable[[Event], None]
 
 event_logger = logging.getLogger("event reducer")
 char_logger = logging.getLogger("character")
-item_logger = logging.getLogger("item")
+
+payload = toolz.get("payload")
 
 
 def event_reducer(aiohttp_session: ClientSession, gql_session: GQLClient) -> Dispatch:
@@ -45,10 +47,6 @@ def event_reducer(aiohttp_session: ClientSession, gql_session: GQLClient) -> Dis
         if event_type == "PlayerLogin":
             create_task(char_queue.add(payload["character_id"]))
             char_logger.debug(f"Queued character {payload['character_id']}")
-        elif event_type == "ItemAdded":
-            item_logger.debug(
-                "Item event received, but handling has yet to be implemented"
-            )
         else:
             event_logger.warn(f"Ignoring event: {event}")
 

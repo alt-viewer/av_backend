@@ -74,6 +74,7 @@ global_logger = logging.getLogger("global_logger")
 LOGGER_SETTINGS = {
     "character": logging.INFO,
     "character queue": logging.INFO,
+    "event reducer": logging.DEBUG,
     "db": logging.INFO,
     "websocket": logging.INFO,
 }
