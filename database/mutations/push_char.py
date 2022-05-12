@@ -3,11 +3,11 @@ from typing import Iterable, Iterable, Container, Hashable
 from operator import attrgetter, methodcaller
 import toolz.curried as toolz
 
-from entities.character import Character, Item
-from database.gql import GQLClient
-from converters import convert_json, item_intersection
-from database.mutations.push_items import push_items
-from eggs import omit
+from av_backend.entities.character import Character, Item
+from av_backend.database.gql import GQLClient
+from av_backend.converters import convert_json, item_intersection
+from av_backend.database.mutations.push_items import push_items
+from av_backend.eggs import omit
 
 query = gql(
     """

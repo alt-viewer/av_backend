@@ -3,11 +3,11 @@ import toolz.curried as toolz
 from datetime import datetime
 from typing import Iterable
 
-from queries.api_query import query
-from entities import Factions, Item, Character, Servers
-from payloads import CharacterPayload, ItemObj
-from queries.batch import with_page
-from converters import parse_characters
+from av_backend.queries.api_query import query
+from av_backend.entities import Factions, Item, Character, Servers
+from av_backend.payloads import CharacterPayload, ItemObj
+from av_backend.queries.batch import with_page
+from av_backend.converters import parse_characters
 
 DEFAULT_FIELDS = [
     "items",

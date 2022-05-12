@@ -1,7 +1,7 @@
 from operator import methodcaller
 from typing import Iterator
 
-from entities.abstracts import Jsonable
+from av_backend.entities.abstracts import Jsonable
 
 
 _to_json = methodcaller("json")

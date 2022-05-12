@@ -5,9 +5,9 @@ from aiohttp import ClientSession
 import toolz.curried as toolz
 
 from listener.queue import RequestQueue
-from queries import get_characters, with_page
-from database import push_chars, GQLClient
-from entities import Character
+from av_backend.queries import get_characters, with_page
+from av_backend.database import push_chars, GQLClient
+from av_backend.entities import Character
 
 Event: TypeAlias = dict
 Dispatch: TypeAlias = Callable[[Event], None]

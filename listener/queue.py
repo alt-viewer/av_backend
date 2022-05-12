@@ -4,8 +4,8 @@ from asyncio import Lock
 from functools import wraps
 import logging
 
-from queries import with_page
-from entities import Character
+from av_backend.queries import with_page
+from av_backend.entities import Character
 
 default_logger = logging.getLogger("unnamed RequestQueue")
 

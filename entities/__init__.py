@@ -1,10 +1,15 @@
-from entities.character import Character, DBCharacter, MatchChar, MatchCharDict
-from entities.faction import Factions
-from entities.server import Servers
-from entities.item import Item, ItemDict
-from entities.match import Match, show_matches
-from entities import abstracts
-from entities.node_types import NodeTypes
+from av_backend.entities.character import (
+    Character,
+    DBCharacter,
+    MatchChar,
+    MatchCharDict,
+)
+from av_backend.entities.faction import Factions
+from av_backend.entities.server import Servers
+from av_backend.entities.item import Item, ItemDict
+from av_backend.entities.match import Match, show_matches
+from av_backend.entities import abstracts
+from av_backend.entities.node_types import NodeTypes
 
 __all__ = [
     "Character",

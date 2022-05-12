@@ -2,8 +2,8 @@ from itertools import combinations
 from typing import Iterable
 import toolz.curried as toolz
 
-from matching.partition import group
-from entities import MatchCharDict, Match
+from av_backend.matching.partition import group
+from av_backend.entities import MatchCharDict, Match
 
 THRESHOLD = 70
 

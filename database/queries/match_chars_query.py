@@ -1,8 +1,8 @@
 import toolz.curried as toolz
 
-from entities import MatchCharDict
-from converters import convert_matchchar
-from database.gql import GQLClient, query
+from av_backend.entities import MatchCharDict
+from av_backend.converters import convert_matchchar
+from av_backend.database.gql import GQLClient, query
 
 template = """
     query get_match_chars($first: Int, $offset: Int) {

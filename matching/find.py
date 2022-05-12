@@ -5,11 +5,11 @@ import toolz.curried as toolz
 from typing import Iterable, Awaitable
 from operator import attrgetter
 
-from database import count, GQLClient, get_match_char_page
-from entities import Character, Match, NodeTypes, MatchCharDict
-from matching.compare import search
-from queries import gathercat
-from eggs import pick, replace_with
+from av_backend.database import count, GQLClient, get_match_char_page
+from av_backend.entities import Character, Match, NodeTypes, MatchCharDict
+from av_backend.matching.compare import search
+from av_backend.queries import gathercat
+from av_backend.eggs import pick, replace_with
 
 PAGE_SIZE = 10000
 

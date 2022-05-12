@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from entities import MatchCharDict
+from av_backend.entities import MatchCharDict
 
 PARTITION_SIZE = 10
 

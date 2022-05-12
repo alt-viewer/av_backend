@@ -1,4 +1,4 @@
-from payloads.character_payload import (
+from av_backend.payloads.character_payload import (
     CharacterPayload,
     ItemObj,
     OutfitObj,
@@ -6,7 +6,7 @@ from payloads.character_payload import (
     NameObj,
     BattleRankObj,
 )
-from payloads.login_payload import LoginPayload
+from av_backend.payloads.login_payload import LoginPayload
 
 __all__ = [
     "CharacterPayload",

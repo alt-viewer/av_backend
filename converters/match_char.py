@@ -1,7 +1,7 @@
 from toolz.curried import get_in
 
-from entities import MatchChar, Item
-from converters.item import load_items
+from av_backend.entities import MatchChar, Item
+from av_backend.converters.item import load_items
 
 
 def convert_matchchar(char: dict) -> MatchChar:

@@ -1,5 +1,5 @@
-from database import GQLClient, gql
-from entities import NodeTypes
+from av_backend.database import GQLClient, gql
+from av_backend.entities import NodeTypes
 from toolz.curried import get_in
 
 

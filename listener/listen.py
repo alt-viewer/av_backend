@@ -1,4 +1,3 @@
-from entities.character import Character
 import toolz.curried as toolz
 import aiohttp
 import asyncio
@@ -6,8 +5,8 @@ import logging
 from queue import Queue
 from typing import Callable, Awaitable
 
-from queries import query
-from entities import Character
+from av_backend.queries import query
+from av_backend.entities.character import Character
 from listener.queue import RequestQueue
 from listener.dispatch import Dispatch
 

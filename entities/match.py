@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 from typing import Iterable
 
-from entities.character import MatchCharDict
-from eggs import replace_with
-from entities.abstracts import HasInventory
+from av_backend.entities.character import MatchCharDict
+from av_backend.eggs import replace_with
+from av_backend.entities.abstracts import HasInventory
 
 
 @dataclass

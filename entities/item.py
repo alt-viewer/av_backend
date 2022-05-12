@@ -3,7 +3,7 @@ from datetime import datetime
 from pydantic import BaseModel
 from typing import Optional, TypeAlias
 
-from entities.abstracts.jsonable import Jsonable
+from av_backend.entities.abstracts.jsonable import Jsonable
 
 
 @dataclass

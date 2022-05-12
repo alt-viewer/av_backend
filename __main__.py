@@ -7,9 +7,9 @@ from toolz import curry
 
 
 from listener import LoginListener, event_reducer
-from queries import get_characters
-from database import log_task, push_chars, GQLTransport, get_sessions
-from logger import with_logger
+from av_backend.queries import get_characters
+from av_backend.database import log_task, push_chars, GQLTransport, get_sessions
+from av_backend.logger import with_logger
 
 API_URL = "http://localhost:8080/graphql"
 

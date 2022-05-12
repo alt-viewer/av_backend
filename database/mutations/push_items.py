@@ -2,9 +2,9 @@ from gql import gql
 from typing import Iterator
 import toolz.curried as toolz
 
-from entities import Item
-from converters import convert_json, load_items
-from database.gql import GQLClient
+from av_backend.entities import Item
+from av_backend.converters import convert_json, load_items
+from av_backend.database.gql import GQLClient
 
 query = gql(
     """

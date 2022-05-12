@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime
 
-from entities import Servers, Factions
+from av_backend.entities import Servers, Factions
 
 
 class FactionInfo(BaseModel):

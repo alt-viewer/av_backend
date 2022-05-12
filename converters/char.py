@@ -3,10 +3,10 @@ from typing import Iterator
 import toolz.curried as toolz
 import logging
 
-from payloads import CharacterPayload
-from entities import Character, Factions, Servers
-from converters.item import parse_char_items, load_items
-from logger import log_filter
+from av_backend.payloads import CharacterPayload
+from av_backend.entities import Character, Factions, Servers
+from av_backend.converters.item import parse_char_items, load_items
+from av_backend.logger import log_filter
 
 char_logger = logging.getLogger("character")
 

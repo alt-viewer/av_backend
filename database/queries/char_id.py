@@ -1,9 +1,9 @@
 import toolz.curried as toolz
 from enum import Enum
 
-from entities import Character
-from converters import load_char
-from database.gql import GQLClient, query
+from av_backend.entities import Character
+from av_backend.converters import load_char
+from av_backend.database.gql import GQLClient, query
 
 UID_HEADER = """
 query get_single_char ($id: ID!) {

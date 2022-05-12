@@ -3,11 +3,11 @@ from datetime import datetime
 from pydantic import BaseModel
 from typing import TypeAlias
 
-from entities.faction import Factions
-from entities.item import Item, ItemDict
-from entities.server import Servers
-from entities.abstracts.jsonable import Jsonable
-from entities.abstracts.inventory import HasInventory
+from av_backend.entities.faction import Factions
+from av_backend.entities.item import Item, ItemDict
+from av_backend.entities.server import Servers
+from av_backend.entities.abstracts.jsonable import Jsonable
+from av_backend.entities.abstracts.inventory import HasInventory
 
 
 @dataclass
