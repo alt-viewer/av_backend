@@ -10,22 +10,12 @@ from queries import query
 from entities import Character
 from listener.queue import RequestQueue
 from listener.dispatch import Dispatch
+from listener.subscribe import subscription, with_worlds, with_events, LIVE_WORLDS
 
-# NOTE: to listen to items, `logicalAndCharactersWithWorlds` should be `True` and `characters` should be `["all"]`
-PAYLOAD = {
-    "service": "event",
-    "action": "subscribe",
-    "worlds": [
-        "1",  # Connery
-        "10",  # Miller
-        "13",  # Cobalt
-        "17",  # Emerald
-        "40",  # Soltech
-    ],
-    "eventNames": [
-        "PlayerLogin",
-    ],
-}
+# Listening to player logins
+PAYLOAD = toolz.pipe(
+    {}, subscription, with_worlds(LIVE_WORLDS), with_events(["PlayerLogin"])
+)
 
 socket_logger = logging.getLogger("websocket")
 character_logger = logging.getLogger("character")
