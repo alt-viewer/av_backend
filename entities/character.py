@@ -5,7 +5,7 @@ from typing import TypeAlias
 
 from entities.faction import Factions
 from entities.item import Item, ItemDict
-from entities.server import Servers
+from entities.enums import Servers
 from entities.abstracts.jsonable import Jsonable
 from entities.abstracts.inventory import HasInventory
 
