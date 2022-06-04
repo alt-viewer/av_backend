@@ -5,6 +5,7 @@ from entities import Character
 from converters import load_char
 from database.gql import GQLClient, query
 
+# Template for get_char_by_id
 UID_HEADER = """
 query get_single_char ($id: ID!) {
   getCharacter(id: $id) {
@@ -33,6 +34,30 @@ BODY = """
 }
 """
 
+# Template for get_char_by_name
+BY_NAME_TEMPLATE = """
+query get_chars_by_name($names: [String!]!) {
+	queryCharacter(filter: {
+		name: {in: $names}
+	}) {
+		name,
+		id,
+		xid,
+		faction_id,
+		outfit_id,
+		outfit_tag,
+		server_id,
+		battle_rank,
+		last_login,
+		peers { name },
+		eliminated { name },
+		n_items: itemsAggregate {
+			count
+		}
+	}
+}
+"""
+
 
 def make_query(id_type: str) -> str:
     """Choose the query signature based on the type of ID"""
@@ -40,7 +65,7 @@ def make_query(id_type: str) -> str:
     return headers[id_type] + BODY
 
 
-async def get_char_by_id(
+async def by_id(
     session: GQLClient, uid: str = None, xid: int = None
 ) -> list[Character]:
     """Get a character by uid or xid."""
@@ -56,3 +81,22 @@ async def get_char_by_id(
             variables={"id": id_},
         )
     )
+
+
+async def by_name(session: GQLClient, names: list[str]) -> list[Character]:
+    return list(
+        await query(session, BY_NAME_TEMPLATE, load_char, variables={"names": names})
+    )
+
+
+async def get_char(
+    session, GQLClient, names: list[str] = None, uid: str = None, xid: int = None
+) -> list[Character]:
+    """Get a character by name, uid, or xid."""
+    # Comparing against None to have a more intuitive error if an empty string/list is passed
+    if names is not None:
+        return await by_name(session, names)
+    elif uid is not None or xid is not None:
+        return await by_id(session, uid, xid)
+    else:
+        raise ValueError("A name, uid, or xid must be provided.")
