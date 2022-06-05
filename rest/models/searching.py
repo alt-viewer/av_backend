@@ -1,0 +1,29 @@
+from datetime import datetime
+from pydantic import BaseModel
+from enum import Enum
+
+from entities import Factions, Servers
+
+
+class Confidence(Enum):
+    HIGH = "high"
+    MEDIUM = "medium"
+    LOW = "low"
+
+
+class Outfit(BaseModel):
+    outfit_tag: str | None
+    outfit_id: int | None
+
+
+class CharacterResult(BaseModel):
+    name: str
+    id: str
+    outfit: Outfit
+    faction_id: Factions
+    server_id: Servers
+    last_login: datetime
+    battle_rank: int
+
+    n_items: str
+    confidence: Confidence

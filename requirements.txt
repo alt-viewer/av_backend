@@ -3,3 +3,4 @@ thefuzz[speedup]
 yarl
 pydantic
 gql[aiohttp]
+fastapi
