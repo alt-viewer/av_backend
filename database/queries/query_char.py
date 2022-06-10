@@ -90,7 +90,7 @@ async def by_name(session: GQLClient, names: list[str]) -> list[Character]:
 
 
 async def get_char(
-    session, GQLClient, names: list[str] = None, uid: str = None, xid: int = None
+    session: GQLClient, names: list[str] = None, uid: str = None, xid: int = None
 ) -> list[Character]:
     """Get a character by name, uid, or xid."""
     # Comparing against None to have a more intuitive error if an empty string/list is passed
