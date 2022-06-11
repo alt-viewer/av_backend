@@ -4,3 +4,6 @@ yarl
 pydantic
 gql[aiohttp]
 fastapi
+uvicorn
+python-dateutil 
+ 
