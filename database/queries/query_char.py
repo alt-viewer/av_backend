@@ -51,10 +51,11 @@ query get_chars_by_name($names: [String!]!) {
 		last_login,
 		peers { name },
 		eliminated { name },
-		n_items: itemsAggregate {
-			count
-		}
-	}
+        items {
+            id,
+            last_recorded
+        }
+    }
 }
 """
 
@@ -89,6 +90,7 @@ async def by_name(session: GQLClient, names: list[str]) -> list[Character]:
     )
 
 
+@toolz.curry
 async def get_char(
     session: GQLClient, names: list[str] = None, uid: str = None, xid: int = None
 ) -> list[Character]:
