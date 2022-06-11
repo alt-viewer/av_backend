@@ -4,6 +4,8 @@ It is more accurate, but slower.
 """
 
 from fastapi import APIRouter, HTTPException
+from operator import methodcaller
+import toolz.curried as toolz
 
 from database import get_char, get_sessions
 from rest.logic import find_matches_deep
@@ -26,7 +28,11 @@ async def main_route(name: str) -> list[CharacterResult]:
         if not char_results:
             raise HTTPException(status_code=404, detail="Character unavailable")
 
-        return await find_matches_deep(gql_session, char_results[0])
+        return toolz.pipe(
+            await find_matches_deep(gql_session, char_results[0]),
+            toolz.map(methodcaller("json")),
+            list,
+        )
 
 
 deep_search_router = router
