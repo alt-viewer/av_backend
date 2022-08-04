@@ -3,6 +3,10 @@ from typing import Iterator
 import toolz.curried as toolz
 import logging
 
+# datetime.fromisoformat doesn't play nicely with DGraph's
+# RFC datetimes
+from dateutil.parser import parse as parse_rfc
+
 from payloads import CharacterPayload
 from entities import Character, Factions, Servers
 from converters.item import parse_char_items, load_items
@@ -74,7 +78,7 @@ def load_char(char: dict) -> Character:
         char["outfit_tag"],
         char["outfit_id"],
         Factions(int(char["faction_id"])),
-        datetime.fromisoformat(char["last_login"]),
+        parse_rfc(char["last_login"]),
         Servers(int(char["server_id"])),
         char["battle_rank"],
         char["uid"],
