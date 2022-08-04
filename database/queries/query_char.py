@@ -41,7 +41,7 @@ query get_chars_by_name($names: [String!]!) {
 		name: {in: $names}
 	}) {
 		name,
-		id,
+		uid: id,
 		xid,
 		faction_id,
 		outfit_id,
