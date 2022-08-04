@@ -25,7 +25,7 @@ def is_account_wide(item: ItemObj) -> bool:
 
 def load_item(i: dict) -> Item:
     """Load a single database item."""
-    return Item(i["xid"], parse_rfc(i["last_recorded"]), i.get("id"))
+    return Item(i.get("xid"), parse_rfc(i["last_recorded"]), i.get("id"))
 
 
 def load_items(items: list[dict]) -> list[Item]:

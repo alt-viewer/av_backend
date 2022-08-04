@@ -10,8 +10,10 @@ from entities.abstracts.jsonable import Jsonable
 class Item(Jsonable):
     """An account-level item possessed by a character."""
 
-    id: int
+    # PS2 ID - referred to as XID in the DB
+    id: int | None
     last_recorded: datetime
+    # DB ID - referred to as ID in the DB
     uid: str | None = None
 
     def json(self) -> dict:
