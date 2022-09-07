@@ -24,4 +24,4 @@ def replace_with(k: K, new_k: K, f: Callable[[V], V], d: dict[K, V]) -> dict[K, 
     is replaced by `new_k`: `f` of the old value of `k`
     """
     x = d[k]
-    return omit([k], d)
+    return omit([k], d) | {new_k: x}
