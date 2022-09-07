@@ -15,14 +15,11 @@ GQL_URL = "http://localhost:8080/graphql"
 
 router = APIRouter(prefix="/deep-search", tags=["search"])
 
-
-@router.get("/")
-async def no_name() -> str:
-    return "You must provide a character name"
-
-
 @router.get("/{name}")
 async def main_route(name: str) -> list[CharacterResult]:
+    if not name:
+        raise HTTPException(status_code=401, detail="You must provide a character name")
+    
     async with get_sessions(GQL_URL) as (_, gql_session):
         char_results = await get_char(gql_session, names=[name])
         if not char_results:
