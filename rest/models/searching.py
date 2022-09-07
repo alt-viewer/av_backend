@@ -12,8 +12,8 @@ class Confidence(Enum):
 
 
 class Outfit(BaseModel):
-    outfit_tag: str | None
-    outfit_id: int | None
+    tag: str | None
+    id: int | None
 
 
 class CharacterResult(BaseModel):
