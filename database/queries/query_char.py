@@ -52,7 +52,7 @@ query get_chars_by_name($names: [String!]!) {
 		peers { name },
 		eliminated { name },
         items {
-            id,
+            xid,
             last_recorded
         }
     }
