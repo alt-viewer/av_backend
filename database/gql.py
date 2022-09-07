@@ -74,5 +74,8 @@ async def query(
             raise ValueError("Invalid query")
         data_key = match.group(0)
 
-    res = await session.execute(gql(query_literal), variable_values=query_vars)
-    return map(converter, res[data_key])
+    res = (await session.execute(gql(query_literal), variable_values=query_vars))[
+        data_key
+    ]
+    # Sometimes a query will return a single dict instead of a list
+    return map(converter, res if isinstance(res, list) else [res])
