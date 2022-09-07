@@ -34,10 +34,9 @@ def to_result(match: Character) -> CharacterResult:
     )
 
 
-async def find_matches_deep(session: GQLClient, name: str) -> Iterable[CharacterResult]:
-    chars = await get_char(session, names=[name])
-    if not chars:
-        raise ValueError("Character not found in local DB")
-    matches = await find_matches(session, chars[0])
+async def find_matches_deep(
+    session: GQLClient, char: Character
+) -> Iterable[CharacterResult]:
+    matches = await find_matches(session, char)
     match_chars = await gathercat(lambda m: get_char(session, uid=m["id"]), matches)
     return map(to_result, match_chars)
