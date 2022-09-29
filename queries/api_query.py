@@ -1,8 +1,7 @@
 from yarl import URL
+from os import getenv
 
-with open("service_id.txt") as f:
-    service_id = f.readline().strip("\n")
-
+service_id = getenv("SERVICE_ID")
 
 def http_path(path: str | None, service_id: str) -> str:
     return f"/{service_id}/get/ps2:v2/" + (path or "")

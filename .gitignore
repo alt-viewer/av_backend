@@ -3,6 +3,6 @@ results/
 **/__pycache__
 .mypy_cache
 **/.mpypy_cache
-service_id.txt
+.env
 playground.py
 .vscode

@@ -4,6 +4,7 @@ import toolz.curried
 import sys
 import gql
 from toolz import curry
+from dotenv import load_dotenv
 
 
 from listener import LoginListener, event_reducer
@@ -15,6 +16,7 @@ API_URL = "http://localhost:8080/graphql"
 
 
 async def main():
+    load_dotenv()
     async with get_sessions(API_URL) as (asession, gsession):
         # Create dependencies of the listener
         dispatch = event_reducer(asession, gsession)
