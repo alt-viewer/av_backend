@@ -5,6 +5,7 @@ from payloads.character_payload import (
     TimesObj,
     NameObj,
     BattleRankObj,
+    ItemAdded,
 )
 from payloads.login_payload import LoginPayload
 
@@ -16,4 +17,5 @@ __all__ = [
     "TimesObj",
     "NameObj",
     "BattleRankObj",
+    "ItemAdded",
 ]

@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime
 
-from entities import Servers, Factions
+from entities import Servers, Factions, ItemAddedContext
 
 
 class FactionInfo(BaseModel):
@@ -10,9 +10,17 @@ class FactionInfo(BaseModel):
 
 class ItemObj(BaseModel):
     item_id: int
-    account_level: bool | None
     stack_size: int | None
     faction_info: FactionInfo | None
+
+class ItemAdded(BaseModel):
+    context: ItemAddedContext
+    character_id: int
+    item_id: int
+    world_id: Servers
+    
+    event_name: str
+
 
 
 class OutfitObj(BaseModel):

@@ -1,5 +1,5 @@
 from entities.character import Character, DBCharacter, MatchChar, MatchCharDict
-from entities.enums import Servers, Factions
+from entities.enums import Servers, Factions, ItemAddedContext
 from entities.statics import LIVE_WORLDS
 from entities.item import Item, ItemDict
 from entities.match import Match, show_matches
@@ -20,4 +20,5 @@ __all__ = [
     "NodeTypes",
     "show_matches",
     "LIVE_WORLDS",
+    "ItemAddedContext",
 ]

@@ -17,3 +17,6 @@ class Factions(Enum):
     NC = 2
     TR = 3
     NSO = 4
+
+class ItemAddedContext(Enum):
+    ...
