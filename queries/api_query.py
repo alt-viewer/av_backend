@@ -1,7 +1,16 @@
 from yarl import URL
 from os import getenv
+from logging import getLogger
 
-service_id = getenv("SERVICE_ID")
+env_id = getenv("SERVICE_ID")
+if env_id is None:
+    raise EnvironmentError("No service ID in the .env file")
+
+if not env_id.startswith("s:"):
+    getLogger("Service ID").warn("Incorrect service ID format. Should start with 's:'")
+    service_id = "s:" + env_id
+else:
+    service_id = env_id
 
 def http_path(path: str | None, service_id: str) -> str:
     return f"/{service_id}/get/ps2:v2/" + (path or "")
