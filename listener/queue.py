@@ -1,5 +1,5 @@
 from aiohttp import ClientSession
-from typing import Awaitable, Callable, TypeVar, Generic
+from typing import Coroutine, Awaitable, Callable, TypeVar, Generic
 from asyncio import Lock
 from functools import wraps
 import logging
@@ -12,7 +12,7 @@ default_logger = logging.getLogger("unnamed RequestQueue")
 queue_lock = Lock()
 
 
-def with_check(func: Callable[..., None]) -> Callable[..., Awaitable[None]]:
+def with_check(func: Callable[..., None]) -> Callable[..., Coroutine[None, None, None]]:
     """
     After calling the wrapped function, call `RequestQueue._request` if necessary.
     Also logs the ID count.
