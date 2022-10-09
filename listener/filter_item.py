@@ -12,8 +12,8 @@ from payloads import ItemAdded
 # Load whitelist
 with open("static_data/account_wide.json") as f:
     json = load(f)
-    categories = set(json["category_ids"])
-    whitelist = set(json["item_ids"])
+    whitelist = set(map(int, json["item_list"]))
+
 
 def is_account_wide(item: ItemAdded) -> bool:
-    ...
+    return item.item_id in whitelist
