@@ -1,7 +1,7 @@
 from toolz.curried import get_in
 
 from entities import MatchChar, Item
-from converters.item import load_items
+from converters.item import item_from_db
 
 
 def convert_matchchar(char: dict) -> MatchChar:
@@ -12,6 +12,6 @@ def convert_matchchar(char: dict) -> MatchChar:
     return MatchChar(
         uid=char["id"],
         last_login=char["last_login"],
-        items=load_items(char["items"]),
+        items=item_from_db(char["items"]),
         eliminated=list(map(get_in(["id"]), char["eliminated"])),
     )

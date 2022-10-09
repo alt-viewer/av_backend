@@ -3,7 +3,7 @@ from typing import Iterator
 import toolz.curried as toolz
 
 from entities import Item
-from converters import convert_json, load_items
+from converters import convert_json, char_from_db
 from database.gql import GQLClient
 
 query = gql(
@@ -30,5 +30,6 @@ async def push_items(client: GQLClient, items: Iterator[Item]) -> list[Item]:
     return toolz.pipe(
         res,
         toolz.get_in(["addItem", "item"]),
-        load_items,
+        char_from_db,
     )
+

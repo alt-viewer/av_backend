@@ -7,7 +7,7 @@ from queries.api_query import query
 from entities import Factions, Item, Character, Servers
 from payloads import CharacterPayload, ItemObj
 from queries.batch import with_page
-from converters import parse_characters
+from converters import chars_from_census
 
 DEFAULT_FIELDS = [
     "items",
@@ -69,7 +69,7 @@ async def get_characters(
     joins: list[str] = None,
 ) -> Iterable[Character]:
     json = await get_raw_chars(session, ids)
-    return parse_characters(json)
+    return chars_from_census(json)
 
 
 paged_get_chars = lambda session: with_page(get_characters(session))

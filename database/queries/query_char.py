@@ -2,7 +2,7 @@ import toolz.curried as toolz
 from enum import Enum
 
 from entities import Character
-from converters import load_char
+from converters import char_from_db
 from database.gql import GQLClient, query
 
 # Template for get_char_by_id
@@ -78,7 +78,7 @@ async def by_id(
         await query(
             session,
             literal,
-            load_char,
+            char_from_db,
             variables={"id": id_},
         )
     )
@@ -86,7 +86,7 @@ async def by_id(
 
 async def by_name(session: GQLClient, names: list[str]) -> list[Character]:
     return list(
-        await query(session, BY_NAME_TEMPLATE, load_char, variables={"names": names})
+        await query(session, BY_NAME_TEMPLATE, char_from_db, variables={"names": names})
     )
 
 

@@ -28,18 +28,18 @@ def load_item(i: dict) -> Item:
     return Item(i.get("xid"), parse_rfc(i["last_recorded"]), i.get("id"))
 
 
-def load_items(items: list[dict]) -> list[Item]:
+def item_from_db(items: list[dict]) -> list[Item]:
     """
     Use this when converting items from the database.
-    Use `parse_char_items` when converting from the PS2 API
+    Use `item_from_census` when converting from the PS2 API
     """
     return toolz.pipe(items, toolz.map(load_item), list)
 
 
-def parse_char_items(items: list[ItemObj]) -> list[Item]:
+def item_from_census(items: list[ItemObj]) -> list[Item]:
     """
     Use this when converting from the PS2 API
-    Use `load_items` when converting items from the database.
+    Use `item_from_db` when converting items from the database.
 
     """
     now = datetime.now()

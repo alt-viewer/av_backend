@@ -9,7 +9,7 @@ from dateutil.parser import parse as parse_rfc
 
 from payloads import CharacterPayload
 from entities import Character, Factions, Servers
-from converters.item import parse_char_items, load_items
+from converters.item import item_from_census, item_from_db
 from logger import log_filter
 
 char_logger = logging.getLogger("character")
@@ -40,7 +40,7 @@ def make_char(char: CharacterPayload) -> Character:
     return Character(
         char.name.first,
         char.character_id,
-        parse_char_items(char.items),
+        item_from_census(char.items),
         char.outfit.alias if char.outfit else None,
         char.outfit.outfit_id if char.outfit else None,
         char.faction_id,
@@ -56,7 +56,7 @@ def has_all(required: list[str], d: dict) -> bool:
     return all(k in d for k in required)
 
 
-def parse_characters(raw_chars: list[dict]) -> Iterator[Character]:
+def chars_from_census(raw_chars: list[dict]) -> Iterator[Character]:
     """Convert many characters from a PS2 API response"""
     return toolz.pipe(
         raw_chars,
@@ -66,15 +66,15 @@ def parse_characters(raw_chars: list[dict]) -> Iterator[Character]:
     )
 
 
-def load_char(char: dict) -> Character:
+def char_from_db(char: dict) -> Character:
     """
     Load a character from the database.
-    Use `parse_characters` for the PS2 API.
+    Use `char_from_census` for the PS2 API.
     """
     return Character(
         char["name"],
         char["xid"],
-        load_items(char["items"]),
+        item_from_db(char["items"]),
         char["outfit_tag"],
         char["outfit_id"],
         Factions(int(char["faction_id"])),
