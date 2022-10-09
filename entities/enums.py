@@ -19,4 +19,19 @@ class Factions(Enum):
     NSO = 4
 
 class ItemAddedContext(Enum):
-    ...
+    SellBundle="SellBundle"
+    GiveRewardBundleDing="GiveRewardBundle:Ding"
+    GiveRewardBundleAchievement="GiveRewardBundle:Achievement"
+    GiveRewardBundleMetaGameEvent="GiveRewardBundle:MetaGameEvent"
+    GiveRewardBundleMission="GiveRewardBundle:Mission"
+    GiveRwardBundleDirective="GiveRewardBundle:Directive"
+    GiveRewardBundleItem="GiveRewardBundle:Item"
+    GiveRewardBundleNone="GiveRewardBundle:None"
+    SkillGrantItemLine="SkillGrantItemLine"
+    RequestTrialItemLine="RequestTrialItemLine"
+    SkullGrantItem="SkillGrantItem"
+    ScriptAddItem="ScriptAddItem"
+    GuildBankWithdrawal="GuildBankWithdrawal"
+    PcZoneReceiveEscrowPackage="PcZone::ReceiveEscrowPackage"
+    RedeemTerminalProxyItem="RedeemTerminalProxyItem"
+    GenericTerminalTransaction="GenericTerminalTransaction"

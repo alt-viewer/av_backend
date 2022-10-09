@@ -12,15 +12,18 @@ class ItemObj(BaseModel):
     item_id: int
     stack_size: int | None
     faction_info: FactionInfo | None
+    account_level: bool | None
+
 
 class ItemAdded(BaseModel):
     context: ItemAddedContext
     character_id: int
     item_id: int
     world_id: Servers
-    
     event_name: str
-
+    timestamp: datetime
+    zone_id: int
+    item_count: int
 
 
 class OutfitObj(BaseModel):
