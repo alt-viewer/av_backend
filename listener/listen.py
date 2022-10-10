@@ -10,11 +10,21 @@ from queries import query
 from entities import Character
 from listener.queue import RequestQueue
 from listener.dispatch import Dispatch
-from listener.subscribe import subscription, with_worlds, with_events, LIVE_WORLDS
+from listener.subscribe import (
+    subscription,
+    with_worlds,
+    with_events,
+    LIVE_WORLDS,
+    with_items,
+)
 
 # Listening to player logins
 PAYLOAD = toolz.pipe(
-    {}, subscription, with_worlds(LIVE_WORLDS), with_events(["PlayerLogin"])
+    {},
+    subscription,
+    with_worlds(LIVE_WORLDS),
+    with_events(["PlayerLogin"]),
+    with_items,
 )
 
 socket_logger = logging.getLogger("websocket")
