@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 
 from listener import LoginListener, event_reducer
 from queries import get_characters
-from database import log_task, push_chars, GQLTransport, get_sessions
+from database import log_task, push_chars, get_sessions
 from logger import with_logger
 
 API_URL = "http://localhost:8080/graphql"
@@ -17,13 +17,10 @@ API_URL = "http://localhost:8080/graphql"
 
 async def main():
     load_dotenv()
-    async with get_sessions(API_URL) as (asession, gsession):
+    async with get_sessions(API_URL) as (asession, db):
         # Create dependencies of the listener
-        dispatch = event_reducer(asession, gsession)
+        dispatch = event_reducer(asession, db)
         listener = LoginListener(asession, dispatch)
-
-        # Logging tasks
-        asyncio.create_task(log_task(gsession))
 
         try:
             await listener.listen()
