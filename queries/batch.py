@@ -17,6 +17,8 @@ async def gathercat(
 
 
 def with_page(page_size: int = 100):
+    """Split a large list into smaller lists, then call `func` on them concurrently"""
+
     def outer(
         func: Callable[[Sequence], Awaitable[ReturnType]]
     ) -> Callable[[Iterator], Awaitable[list[ReturnType]]]:
