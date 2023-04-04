@@ -4,7 +4,7 @@ from operator import attrgetter, methodcaller
 import toolz.curried as toolz
 
 from entities.character import Character, Item
-from database.gql import GQLClient
+from database.sessions import DBClient
 from converters import convert_json, item_intersection
 from database.mutations.push_items import push_items
 from utils import omit
@@ -49,7 +49,7 @@ def upsertable(char: Character, item_ids: list[str]) -> dict:
     )
 
 
-async def patch_chars(client: GQLClient, chars: list[Character]) -> Iterable[dict]:
+async def patch_chars(client: DBClient, chars: list[Character]) -> Iterable[dict]:
     """
     Upsert the items from each character, then construct the character's JSON.
 
@@ -71,7 +71,7 @@ async def patch_chars(client: GQLClient, chars: list[Character]) -> Iterable[dic
 
 
 @toolz.curry
-async def push_chars(client: GQLClient, chars: Iterable[Character]) -> None:
+async def push_chars(client: DBClient, chars: Iterable[Character]) -> None:
     """
     Upsert the characters into the database. This is fairly expensive
     due to 2 queries and a lot of conversion. See patch_chars about complexity.

@@ -3,7 +3,7 @@ from enum import Enum
 
 from entities import Character
 from converters import char_from_db
-from database.gql import GQLClient, query
+from database.sessions import DBClient, query
 
 # Template for get_char_by_id
 UID_HEADER = """
@@ -67,7 +67,7 @@ def make_query(id_type: str) -> str:
 
 
 async def by_id(
-    session: GQLClient, uid: str = None, xid: int = None
+    session: DBClient, uid: str | None = None, xid: int | None = None
 ) -> list[Character]:
     """Get a character by uid or xid."""
     if not any((uid, xid)):
@@ -84,7 +84,7 @@ async def by_id(
     )
 
 
-async def by_name(session: GQLClient, names: list[str]) -> list[Character]:
+async def by_name(session: DBClient, names: list[str]) -> list[Character]:
     return list(
         await query(session, BY_NAME_TEMPLATE, char_from_db, variables={"names": names})
     )
@@ -92,7 +92,10 @@ async def by_name(session: GQLClient, names: list[str]) -> list[Character]:
 
 @toolz.curry
 async def get_char(
-    session: GQLClient, names: list[str] = None, uid: str = None, xid: int = None
+    session: DBClient,
+    names: list[str] | None = None,
+    uid: str | None = None,
+    xid: int | None = None,
 ) -> list[Character]:
     """Get a character by name, uid, or xid."""
     # Comparing against None to have a more intuitive error if an empty string/list is passed

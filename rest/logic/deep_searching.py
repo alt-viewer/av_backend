@@ -2,7 +2,7 @@ from typing import Iterable
 import toolz.curried as toolz
 
 from rest.models.searching import CharacterResult, Confidence, Outfit
-from database import GQLClient, get_char
+from database import DBClient, get_char
 from matching import find_matches
 from entities import MatchCharDict, Character, Match
 from queries import gathercat
@@ -42,7 +42,7 @@ def to_result(match: Character) -> CharacterResult:
 
 
 async def find_matches_deep(
-    session: GQLClient, char: Character
+    session: DBClient, char: Character
 ) -> Iterable[CharacterResult]:
     matches = await find_matches(session, char)
     match_chars = await gathercat(

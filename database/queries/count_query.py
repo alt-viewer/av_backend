@@ -1,4 +1,4 @@
-from database import GQLClient, gql
+from database import DBClient, gql
 from entities import NodeTypes
 from toolz.curried import get_in
 
@@ -24,7 +24,7 @@ def create_query(query_name: str):
     )
 
 
-async def count(session: GQLClient, field: NodeTypes) -> int:
+async def count(session: DBClient, field: NodeTypes) -> int:
     """Count how many nodes of a given type exist."""
     query_name = make_query_name(field)
     return (await session.execute(create_query(query_name)))[query_name]["count"]

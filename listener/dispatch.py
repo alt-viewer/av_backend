@@ -7,7 +7,7 @@ import toolz.curried as toolz
 from listener.queue import RequestQueue
 from listener.filter_item import is_account_wide
 from queries import get_characters, with_page
-from database import push_chars, GQLClient
+from database import push_chars, DB
 from entities import Character
 from payloads import ItemAdded
 
@@ -28,7 +28,7 @@ def to_item_added(payload: dict) -> ItemAdded:
     )
 
 
-def event_reducer(aiohttp_session: ClientSession, gql_session: GQLClient) -> Dispatch:
+def event_reducer(aiohttp_session: ClientSession, db: DB) -> Dispatch:
     """
     Get a dispatch function.
     Given a PS2 websocket event, this function will schedule some task to handle it.
@@ -36,19 +36,14 @@ def event_reducer(aiohttp_session: ClientSession, gql_session: GQLClient) -> Dis
 
     If the event is unknown, a warning will be logged.
     Currently supported events:
-        PlayerLogin:
-            Puts the character ID in a queue that will
-            request the characters from Census in batches.
-            The responses are used to update the database.
         ItemAdded:
-            Similar to PlayerLogin but for items.
-            Updates the character's items if it exists in the database.
-            Otherwise, inserts the characters into the database.
+            Adds the item to the owner's inventory if the owner is already in the database.
+            Otherwise, inserts the character into the database.
     """
     SUPPORTED = {"PlayerLogin", "ItemAdded"}
     char_queue = RequestQueue[Character](
         with_page()(get_characters(aiohttp_session)),
-        push_chars(gql_session),
+        push_chars(db),
         logger=char_logger,
     )
 

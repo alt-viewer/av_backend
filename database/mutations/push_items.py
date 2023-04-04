@@ -4,7 +4,7 @@ import toolz.curried as toolz
 
 from entities import Item
 from converters import convert_json, char_from_db
-from database.gql import GQLClient
+from database.sessions import DBClient
 
 query = gql(
     """
@@ -21,7 +21,7 @@ mutation addItems($items: [AddItemInput!]!) {
 )
 
 
-async def push_items(client: GQLClient, items: Iterator[Item]) -> list[Item]:
+async def push_items(client: DBClient, items: Iterator[Item]) -> list[Item]:
     """Add/update the given items in the database and return {uid, xid, last_recorded}"""
     unique_items = iter(set(items))
     res = await client.execute(
@@ -32,4 +32,3 @@ async def push_items(client: GQLClient, items: Iterator[Item]) -> list[Item]:
         toolz.get_in(["addItem", "item"]),
         char_from_db,
     )
-
