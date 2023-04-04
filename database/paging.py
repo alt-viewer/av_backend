@@ -22,13 +22,15 @@ def id_range_filter(custom_filter: Filter | None = None) -> Callable[[int], Filt
 
 # Adapted from https://www.codementor.io/@arpitbhayani/fast-and-efficient-pagination-in-mongodb-9095flbqr
 async def paged_collection(
-    page_size: int, collection: Collection, filter: Filter | None = None
+    page_size: int, collection: Collection, **kwargs
 ) -> AsyncGenerator[list[dict], None]:
     """
-    Lazily request pages from the collection of size `page_size` according to `filter`.
+    Lazily request pages from the collection of size `page_size`.
+    !WARNING: it is unsafe to pass a filter that operates on `_id`.
     """
-    make_filter = id_range_filter(filter)
-    get_page = lambda f: collection.find(f).limit(page_size).to_list()
+    base_filter = kwargs.pop("filter", {})
+    make_filter = id_range_filter(base_filter)
+    get_page = lambda f: collection.find(f, **kwargs).limit(page_size).to_list()
     page = await get_page(filter)
     while page:
         yield page
