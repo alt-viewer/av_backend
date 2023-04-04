@@ -41,16 +41,16 @@ class Character(Jsonable, HasInventory):
 
     def update(
         self,
-        name: str = None,
-        id: int = None,
-        items: list[Item] = None,
+        name: str | None = None,
+        id: int | None = None,
+        items: list[Item] | None = None,
         outfit_tag: str | None = None,
         outfit_id: int | None = None,
-        faction_id: Factions = None,
-        last_login: datetime = None,
-        server_id: Servers = None,
-        battle_rank: int = None,
-        uid: str = None,
+        faction_id: Factions | None = None,
+        last_login: datetime | None = None,
+        server_id: Servers | None = None,
+        battle_rank: int | None = None,
+        uid: str | None = None,
     ) -> "Character":
         """Create a new character with the union of the new and old attributes"""
         return Character(
