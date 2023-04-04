@@ -3,9 +3,18 @@ from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabse
 from typing import TypeAlias, TypeVar, Callable, Iterable, AsyncIterator
 from contextlib import asynccontextmanager
 from re import compile
+import json
 
 DBClient: TypeAlias = AsyncIOMotorClient
 DB: TypeAlias = AsyncIOMotorDatabse
+
+
+def load_db_config() -> dict:
+    with open("data/db/config.json") as f:
+        return json.load(f)
+
+
+config = load_db_config()
 
 
 @asynccontextmanager
@@ -18,7 +27,9 @@ async def get_sessions(
     """
     try:
         session = ClientSession()
-        database = AsyncIOMotorClient("localhost", 27017)["alt-viewer"]
+        database = AsyncIOMotorClient(config["host_name"], config["port"])[
+            config["dbName"]
+        ]
         yield (session, database)
     finally:
         await session.close()
