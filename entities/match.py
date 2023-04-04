@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Iterable
 
 from entities.character import MatchCharDict
-from eggs import replace_with
+from utils import replace_with
 from entities.abstracts import HasInventory
 
 

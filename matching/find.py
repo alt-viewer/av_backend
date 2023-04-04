@@ -9,7 +9,7 @@ from database import count, GQLClient, get_match_char_page
 from entities import Character, Match, NodeTypes, MatchCharDict
 from matching.compare import search
 from queries import gathercat
-from eggs import pick, replace_with
+from utils import pick, replace_with
 
 PAGE_SIZE = 10000
 
