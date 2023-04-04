@@ -10,7 +10,7 @@ import toolz.curried as toolz
 from payloads import ItemAdded
 
 # Load whitelist
-with open("static_data/account_wide.json") as f:
+with open("data/account_wide.json") as f:
     json = load(f)
     whitelist = set(map(int, json["item_list"]))
 
