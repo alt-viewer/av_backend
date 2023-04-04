@@ -1,36 +1,18 @@
 import toolz.curried as toolz
+from typing import AsyncGenerator
 
 from entities import MatchCharDict
-from converters import convert_matchchar
-from database.sessions import DBClient, query
+from database.types import DB, Collection
+from database.paging import paged_collection
 
-template = """
-    query get_match_chars($first: Int, $offset: Int) {
-        queryCharacter(first: $first, offset: $offset) {
-            id,
-            xid,
-            last_login,
-            items {
-                xid,
-                last_recorded
-            },
-            eliminated {
-                id
-            }
-        }
+
+def match_char_pages(
+    db: DB, page_size: int
+) -> AsyncGenerator[list[MatchCharDict], None]:
+    projections = {
+        "_id": 1,
+        "xid": 1,
+        "lastLogin": 1,
+        "items": 1,
     }
-"""
-
-
-async def get_match_char_page(
-    session: DBClient, page_size: int, offset: int
-) -> list[MatchCharDict]:
-    """Gets a minimalist view of a page of characters."""
-    return list(
-        await query(
-            session,
-            template,
-            toolz.identity,
-            variables={"first": page_size, "offset": offset},
-        )
-    )
+    return paged_collection(page_size, db.characters, projections=projections)
