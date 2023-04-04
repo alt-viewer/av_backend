@@ -1,4 +1,4 @@
-from database.sessions import get_sessions, DB, DBClient, Collection, load_db_config
+from database.sessions import get_sessions, load_db_config
 from database.queries.log_db import log_task
 from database.queries.match_chars_query import get_match_char_page
 from database.queries.count_query import count
@@ -9,6 +9,7 @@ from database.queries.query_char import (
 )
 from database.mutations.push_items import push_items
 from database.mutations.push_char import push_chars
+from database.types import DB, DBClient, Collection
 
 __all__ = [
     "push_chars",

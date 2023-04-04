@@ -4,14 +4,11 @@ from motor.motor_asyncio import (
     AsyncIOMotorDatabse,
     AsyncIOMotorCollection,
 )
-from typing import TypeAlias, TypeVar, Callable, Iterable, AsyncIterator
+from typing import AsyncIterator
 from contextlib import asynccontextmanager
-from re import compile
 import json
 
-DBClient: TypeAlias = AsyncIOMotorClient
-DB: TypeAlias = AsyncIOMotorDatabse
-Collection: TypeAlias = AsyncIOMotorCollection
+from database.types import DB
 
 
 def load_db_config() -> dict:
