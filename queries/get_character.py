@@ -45,9 +45,9 @@ def make_params(
 async def get_raw_chars(
     session: ClientSession,
     ids: Iterable[int],
-    fields: list[str] = None,
-    joins: list[str] = None,
-    item_query: str = None,
+    fields: list[str] | None = None,
+    joins: list[str] | None = None,
+    item_query: str | None = None,
 ) -> list[dict]:
     fs = fields or DEFAULT_FIELDS
     js = joins or DEFAULT_JOINS
@@ -65,8 +65,8 @@ async def get_raw_chars(
 async def get_characters(
     session: ClientSession,
     ids: Iterable[int],
-    fields: list[str] = None,
-    joins: list[str] = None,
+    fields: list[str] | None = None,
+    joins: list[str] | None = None,
 ) -> Iterable[Character]:
     json = await get_raw_chars(session, ids)
     return chars_from_census(json)

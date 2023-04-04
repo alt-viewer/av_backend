@@ -17,7 +17,9 @@ def http_path(path: str | None, service_id: str) -> str:
     return f"/{service_id}/get/ps2:v2/" + (path or "")
 
 
-def query(path: str | None = None, params: dict = None, websocket: bool = False) -> URL:
+def query(
+    path: str | None = None, params: dict | None = None, websocket: bool = False
+) -> URL:
     """Construct a PS2 API query."""
     query = params or {}
     query.update({"service-id": service_id} if websocket else {})

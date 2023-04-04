@@ -42,7 +42,7 @@ class RequestQueue(Generic[T]):
         requester: Callable[[set[int]], Awaitable[list[T]]],
         put: Callable[[list[T]], Awaitable[None]],
         min_size: int = 20,
-        logger: logging.Logger = None,
+        logger: logging.Logger | None = None,
     ):
         self.req = requester
         self.put = put
