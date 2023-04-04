@@ -13,9 +13,9 @@ char_validator = load_json("data/db/validators/characters.json")
 
 # Create DB
 print("Creating database...")
-host, port = config["host_name"], config["port"]
+host, port, db_name = config["host_name"], config["port"], config["dbName"]
 client: MongoClient = MongoClient(f"mongodb://{host}:{port}/")
-db = client["altViewerDB"]
+db = client[db_name]
 print("Database created successfully")
 
 # Create collections
