@@ -10,6 +10,7 @@ from database.queries.query_char import (
 from database.mutations.push_items import push_items
 from database.mutations.push_char import push_chars
 from database.types import DB, DBClient, Collection
+from database.paging import paged_collection
 
 __all__ = [
     "push_chars",
@@ -26,4 +27,5 @@ __all__ = [
     "DBClient",
     "Collection",
     "load_db_client",
+    "paged_collection",
 ]
