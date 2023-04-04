@@ -23,7 +23,6 @@ PAYLOAD = toolz.pipe(
     {},
     subscription,
     with_worlds(LIVE_WORLDS),
-    with_events(["PlayerLogin"]),
     with_items,
 )
 
