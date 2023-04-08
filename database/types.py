@@ -17,4 +17,4 @@ Filter: TypeAlias = dict
 # Domain-specific aliases
 XID: TypeAlias = int
 UID: TypeAlias = int
-Collection = Literal["Character"]
+Collection = Literal["characters"]
