@@ -13,7 +13,7 @@ char_validator = load_json("data/db/validators/characters.json")
 
 # Create DB
 print("Creating database...")
-host, port, db_name = config["host_name"], config["port"], config["dbName"]
+host, port, db_name = config["host_name"], config["port"], config["db_name"]
 client: MongoClient = MongoClient(f"mongodb://{host}:{port}/")
 db = client[db_name]
 print("Database created successfully")
