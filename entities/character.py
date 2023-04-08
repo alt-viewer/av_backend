@@ -13,7 +13,7 @@ from entities.abstracts.inventory import HasInventory
 class Character(Jsonable, HasInventory):
     # Census-side
     name: str
-    id: int
+    xid: int
     items: list[Item]
     outfit_tag: str | None
     outfit_id: int | None
@@ -28,7 +28,7 @@ class Character(Jsonable, HasInventory):
     def json(self) -> dict:
         return {
             "name": self.name,
-            "xid": self.id,
+            "xid": self.xid,
             "outfit_tag": self.outfit_tag,
             "outfit_id": self.outfit_id,
             "faction_id": self.faction_id.value,
@@ -42,7 +42,7 @@ class Character(Jsonable, HasInventory):
     def update(
         self,
         name: str | None = None,
-        id: int | None = None,
+        xid: int | None = None,
         items: list[Item] | None = None,
         outfit_tag: str | None = None,
         outfit_id: int | None = None,
@@ -55,7 +55,7 @@ class Character(Jsonable, HasInventory):
         """Create a new character with the union of the new and old attributes"""
         return Character(
             name or self.name,
-            id or self.id,
+            xid or self.xid,
             items or self.items,
             outfit_tag or self.outfit_tag,
             outfit_id or self.outfit_id,
@@ -70,7 +70,7 @@ class Character(Jsonable, HasInventory):
         return f"""
         Character(
             name={self.name},
-            xid={self.id},
+            xid={self.xid},
             items={self._hide_items()},
             outfit_tag={self.outfit_tag},
             outfit_id={self.outfit_id},
@@ -86,7 +86,7 @@ class Character(Jsonable, HasInventory):
         return f"""
         Character(
             name={self.name},
-            xid={self.id},
+            xid={self.xid},
             items={self.items},
             outfit_tag={self.outfit_tag},
             outfit_id={self.outfit_id},
