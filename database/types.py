@@ -5,10 +5,16 @@ from motor.motor_asyncio import (
     AsyncIOMotorCollection,
     AsyncIOMotorCursor,
 )
+from typing import Literal
 
+# DB-related aliases
 DBClient: TypeAlias = AsyncIOMotorClient
 DB: TypeAlias = AsyncIOMotorDatabse
-Collection: TypeAlias = AsyncIOMotorCollection
+DBCollection: TypeAlias = AsyncIOMotorCollection
 Cursor: TypeAlias = AsyncIOMotorCursor
 Filter: TypeAlias = dict
+
+# Domain-specific aliases
 XID: TypeAlias = int
+UID: TypeAlias = int
+Collection = Literal["Character"]
