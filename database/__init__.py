@@ -8,7 +8,7 @@ from database.queries.query_char import (
     get_char_by_uid,
 )
 from database.mutations.push_items import push_items
-from database.mutations.push_char import push_chars
+from database.mutations.insert_char import push_chars
 from database.types import DB, DBClient, Collection, XID, UID
 from database.paging import paged_collection
 
