@@ -1,0 +1,34 @@
+{
+  "characters": [
+    {
+      "name": "TestCharNoItems",
+      "xid": 1205125883501355763,
+      "factionID": 1,
+      "serverID": 1,
+      "lastLogin": "$$NOW",
+      "battleRank": 1
+    },
+    {
+      "name": "TestCharWithItems",
+      "xid": 1205125883501355764,
+      "factionID": 1,
+      "serverID": 1,
+      "lastLogin": "$$NOW",
+      "battleRank": 1,
+      "items": [
+        {
+          "xid": 1,
+          "lastRecorded": "$$NOW"
+        },
+        {
+          "xid": 2,
+          "lastRecorded": "$$NOW"
+        },
+        {
+          "xid": 3,
+          "lastRecorded": "$$NOW"
+        }
+      ]
+    }
+  ]
+}
