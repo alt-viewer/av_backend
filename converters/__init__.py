@@ -1,4 +1,4 @@
-from converters.item import item_from_db, item_from_census, item_intersection
+from converters.item import items_from_db, items_from_census, item_intersection
 from converters.json import convert_json
 from converters.match_char import convert_matchchar
 from converters.char import cast_char, make_char, chars_from_census, char_from_db

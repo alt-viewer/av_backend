@@ -3,14 +3,11 @@ from typing import Iterator
 import toolz.curried as toolz
 import logging
 
-# datetime.fromisoformat doesn't play nicely with DGraph's
-# RFC datetimes
-from dateutil.parser import parse as parse_rfc
-
 from payloads import CharacterPayload
 from entities import Character, Factions, Servers
-from converters.item import item_from_census, item_from_db
+from converters.item import items_from_census, items_from_db
 from logger import log_filter
+from utils.dict import has_all
 
 char_logger = logging.getLogger("character")
 
@@ -40,7 +37,7 @@ def make_char(char: CharacterPayload) -> Character:
     return Character(
         char.name.first,
         char.character_id,
-        item_from_census(char.items),
+        items_from_census(char.items),
         char.outfit.alias if char.outfit else None,
         char.outfit.outfit_id if char.outfit else None,
         char.faction_id,
@@ -49,11 +46,6 @@ def make_char(char: CharacterPayload) -> Character:
         char.battle_rank.value,
         None,
     )
-
-
-@toolz.curry
-def has_all(required: list[str], d: dict) -> bool:
-    return all(k in d for k in required)
 
 
 def chars_from_census(raw_chars: list[dict]) -> Iterator[Character]:
@@ -66,20 +58,21 @@ def chars_from_census(raw_chars: list[dict]) -> Iterator[Character]:
     )
 
 
-def char_from_db(char: dict) -> Character:
+def char_from_db(d: dict) -> Character:
     """
     Load a character from the database.
     Use `char_from_census` for the PS2 API.
     """
+    items = d.get("items")
     return Character(
-        char["name"],
-        char["xid"],
-        item_from_db(char["items"]),
-        char["outfit_tag"],
-        char["outfit_id"],
-        Factions(int(char["faction_id"])),
-        parse_rfc(char["last_login"]),
-        Servers(int(char["server_id"])),
-        char["battle_rank"],
-        char["uid"],
+        d["name"],
+        d["xid"],
+        items_from_db(items) if items else [],
+        d.get("outfitTag"),
+        d.get("outfitID"),
+        d["factionID"],
+        d["lastLogin"],
+        d["serverID"],
+        d["battleRank"],
+        d["_id"],
     )

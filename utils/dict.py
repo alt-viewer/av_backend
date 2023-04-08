@@ -25,3 +25,8 @@ def replace_with(k: K, new_k: K, f: Callable[[V], V], d: dict[K, V]) -> dict[K, 
     """
     x = d[k]
     return omit([k], d) | {new_k: x}
+
+
+@toolz.curry
+def has_all(required: list[str], d: dict) -> bool:
+    return all(k in d for k in required)

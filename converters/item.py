@@ -25,21 +25,21 @@ def is_account_wide(item: ItemObj) -> bool:
 
 def load_item(i: dict) -> Item:
     """Load a single database item."""
-    return Item(i.get("xid"), parse_rfc(i["last_recorded"]), i.get("id"))
+    return Item(i.get("xid"), i["last_recorded"], i.get("_id"))
 
 
-def item_from_db(items: list[dict]) -> list[Item]:
+def items_from_db(items: list[dict]) -> list[Item]:
     """
     Use this when converting items from the database.
-    Use `item_from_census` when converting from the PS2 API
+    Use `items_from_census` when converting from the PS2 API
     """
     return toolz.pipe(items, toolz.map(load_item), list)
 
 
-def item_from_census(items: list[ItemObj]) -> list[Item]:
+def items_from_census(items: list[ItemObj]) -> list[Item]:
     """
     Use this when converting from the PS2 API
-    Use `item_from_db` when converting items from the database.
+    Use `items_from_db` when converting items from the database.
 
     """
     now = datetime.now()
