@@ -1,25 +1,15 @@
 from asyncio import sleep
-from gql import gql
-from gql.client import AsyncClientSession
 import logging
 from toolz import get_in
 
+from database.types import DB
+from database.queries.count_query import count
+
 db_logger = logging.getLogger("db")
 
-query = gql(
-    """
-            query count_chars {
-  aggregateCharacter {
-    count
-  }
-}
-"""
-)
 
-
-async def log_task(client: AsyncClientSession) -> None:
+async def log_task(db: DB) -> None:
     while True:
-        res = await client.execute(query)
-        count = get_in(["aggregateCharacter", "count"], res)
-        db_logger.info(f"{count or 0} characters recorded")
+        char_count = count(db, "characters")
+        db_logger.info(f"{char_count or 0} characters recorded")
         await sleep(30)
