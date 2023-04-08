@@ -8,6 +8,10 @@ from entities import Character
 
 @toolz.curry
 async def push_chars(db: DB, chars: Iterable[Character]) -> None:
+    """
+    Commit a list of characters to the database
+    """
+    # See: https://pymongo.readthedocs.io/en/stable/examples/bulk.html
     await db.characters.bulk_write(
         [
             UpdateOne({"xid": char.xid}, {"$set": char.json()}, upsert=True)
