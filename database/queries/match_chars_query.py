@@ -13,6 +13,9 @@ def match_char_pages(
         "_id": 1,
         "xid": 1,
         "lastLogin": 1,
-        "items": 1,
+        "items": {
+            "xid": 1,
+            "lastRecorded": 1,
+        },
     }
     return paged_collection(page_size, db.characters, projections=projections)
