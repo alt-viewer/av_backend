@@ -8,8 +8,7 @@
       "factionID",
       "serverID",
       "lastLogin",
-      "battleRank",
-      "items"
+      "battleRank"
     ],
     "properties": {
       "name": {
@@ -17,7 +16,7 @@
         "description": "'name' must be a string and is required"
       },
       "xid": {
-        "bsonType": "int",
+        "bsonType": "long",
         "minimum": 0,
         "description": "'xid' must be an integer above 0 and is required"
       },
@@ -53,8 +52,9 @@
         "maximum": 120,
         "description": "'battleRank' must be an integer in the range (1, 120) and is required"
       },
-      "items": {
-        "bsonType": ["array"],
+      "charItems": {
+        "bsonType": "array",
+        "description": "'items' is an array that may be empty",
         "items": {
           "bsonType": "object",
           "required": ["xid", "lastRecorded"],
