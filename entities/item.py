@@ -17,7 +17,11 @@ class Item(Jsonable):
     uid: str | None = None
 
     def json(self) -> dict:
-        return {"xid": self.id, "last_recorded": self.last_recorded.isoformat()}
+        return {
+            "xid": self.id,
+            "_id": self.uid,
+            "lastRecorded": self.last_recorded.isoformat(),
+        }
 
     @property
     def __key(self) -> tuple:

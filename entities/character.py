@@ -7,6 +7,7 @@ from entities.item import Item, ItemDict
 from entities.enums import Servers, Factions
 from entities.abstracts.jsonable import Jsonable
 from entities.abstracts.inventory import HasInventory
+from converters import convert_json
 
 
 @dataclass
@@ -29,14 +30,14 @@ class Character(Jsonable, HasInventory):
         return {
             "name": self.name,
             "xid": self.xid,
-            "outfit_tag": self.outfit_tag,
-            "outfit_id": self.outfit_id,
-            "faction_id": self.faction_id.value,
-            "server_id": self.server_id.value,
-            "battle_rank": self.battle_rank,
-            "last_login": self.last_login.isoformat(),
-            "items": list(map(lambda i: i.json(), self.items)),
-            "uid": self.uid,
+            "outfitTag": self.outfit_tag,
+            "outfitID": self.outfit_id,
+            "factionID": self.faction_id.value,
+            "serverID": self.server_id.value,
+            "battleRank": self.battle_rank,
+            "lastLogin": self.last_login.isoformat(),
+            "items": convert_json(self.items),
+            "_id": self.uid,
         }
 
     def update(
