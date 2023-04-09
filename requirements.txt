@@ -1,10 +1,7 @@
 toolz
-thefuzz[speedup]
 yarl
 pydantic
-gql[aiohttp]
 fastapi
 uvicorn
-python-dateutil
 python-dotenv
  

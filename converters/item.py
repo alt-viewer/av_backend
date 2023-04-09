@@ -1,9 +1,5 @@
 import toolz.curried as toolz
 from datetime import datetime
-
-# datetime.fromisoformat doesn't play nicely with DGraph's
-# RFC datetimes
-from dateutil.parser import parse as parse_rfc
 from typing import Iterable
 
 from payloads import ItemObj
