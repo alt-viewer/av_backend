@@ -53,7 +53,6 @@ class BattleRankObj(BaseModel):
 
 
 class CharacterPayload(BaseModel):
-    items: list[ItemObj] | None
     outfit: OutfitObj | None
     world_id: Servers
     times: TimesObj

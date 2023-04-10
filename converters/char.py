@@ -31,13 +31,10 @@ def cast_char(char_data: dict) -> dict:
 
 def make_char(char: CharacterPayload) -> Character:
     """Build a Character from a CharacterPayload."""
-    if not char.items:
-        raise ValueError("Character lacks items")
-
     return Character(
         char.name.first,
         char.character_id,
-        items_from_census(char.items) if char.items else [],
+        [],
         char.outfit.alias if char.outfit else None,
         char.outfit.outfit_id if char.outfit else None,
         char.faction_id,
@@ -53,8 +50,14 @@ def chars_from_census(raw_chars: list[dict]) -> Iterator[Character]:
     return toolz.pipe(
         raw_chars,
         # Ignore characters that have no items or server
-        log_filter(char_logger, has_all(["items", "world_id"])),
-        toolz.map(toolz.compose(make_char, lambda c: CharacterPayload(**c), cast_char)),
+        log_filter(char_logger, has_all(["world_id"])),
+        toolz.map(
+            toolz.compose(
+                make_char,
+                lambda c: CharacterPayload(**c),
+                cast_char,
+            )
+        ),
     )
 
 
