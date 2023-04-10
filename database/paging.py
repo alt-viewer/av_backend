@@ -1,4 +1,3 @@
-from motor import MotorCursor
 from typing import AsyncGenerator, TypeAlias, Callable, TypeVar
 import toolz.curried as toolz
 
