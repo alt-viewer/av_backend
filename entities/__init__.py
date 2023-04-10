@@ -1,6 +1,6 @@
 from entities.character import Character, DBCharacter
 from entities.enums import Servers, Factions, ItemAddedContext
-from entities.statics import LIVE_WORLDS
+from entities.statics import LIVE_WORLDS, DEAD_WORLDS
 from entities.item import Item, ItemDict
 from entities.match import Match, MatchChar, MatchCharDict, show_matches
 from entities.primitive import XID, UID
@@ -22,6 +22,7 @@ __all__ = [
     "ItemDict",
     "show_matches",
     "LIVE_WORLDS",
+    "DEAD_WORLDS",
     "ItemAddedContext",
     "CharacterPayload",
     "ItemObj",

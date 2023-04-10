@@ -3,9 +3,6 @@ from enum import Enum
 
 class Servers(Enum):
     CONNERY = 1
-    # These worlds no longer exist, but some characters still exist on them
-    DELETED = 3
-    DELETED2 = 8
     MILLER = 10
     COBALT = 13
     EMERALD = 17
