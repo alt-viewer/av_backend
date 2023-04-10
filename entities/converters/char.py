@@ -3,11 +3,11 @@ from typing import Iterator
 import toolz.curried as toolz
 import logging
 
-from payloads import CharacterPayload
+from entities.payloads import CharacterPayload
 from entities import Character, Factions, Servers
-from converters.item import items_from_census, items_from_db
+from entities.converters.item import items_from_census, items_from_db
 from logger import log_filter
-from utils.dict import has_all
+from utils import has_all
 
 char_logger = logging.getLogger("character")
 

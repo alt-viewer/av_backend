@@ -1,7 +1,8 @@
 from toolz.curried import get_in
 
-from entities import MatchChar, Item
-from converters.item import items_from_db
+from entities import MatchChar
+from entities import Item
+from entities.converters.item import items_from_db
 
 
 def convert_matchchar(char: dict) -> MatchChar:
