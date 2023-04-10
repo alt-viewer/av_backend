@@ -1,4 +1,4 @@
-from database.sessions import get_sessions, load_db_config
+from database.sessions import sessions, load_db_config
 from database.queries.log_db import log_task
 from database.queries.match_chars_query import match_char_pages
 from database.queries.count_query import count
@@ -15,7 +15,7 @@ __all__ = [
     "push_chars",
     "log_task",
     "match_char_pages",
-    "get_sessions",
+    "sessions",
     "query",
     "count",
     "get_chars_by_name",

@@ -25,7 +25,7 @@ def _session_factory():
     database: AsyncIOMotorClient | None = None
 
     @asynccontextmanager
-    async def get_sessions() -> AsyncIterator[tuple[ClientSession, DB]]:
+    async def sessions() -> AsyncIterator[tuple[ClientSession, DB]]:
         """
         Create an AIOHTTP session and a MongoDB database reference.
         """
@@ -41,7 +41,7 @@ def _session_factory():
             if session:
                 await session.close()
 
-    return get_sessions
+    return sessions
 
 
-get_sessions = _session_factory()
+sessions = _session_factory()
