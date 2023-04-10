@@ -1,4 +1,4 @@
-from payloads.character_payload import (
+from entities.payloads.character_payload import (
     CharacterPayload,
     ItemObj,
     OutfitObj,
@@ -7,7 +7,7 @@ from payloads.character_payload import (
     BattleRankObj,
     ItemAdded,
 )
-from payloads.login_payload import LoginPayload
+from entities.payloads.login_payload import LoginPayload
 
 __all__ = [
     "CharacterPayload",
