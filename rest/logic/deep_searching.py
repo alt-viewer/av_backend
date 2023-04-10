@@ -5,7 +5,7 @@ from rest.models.searching import CharacterResult, Confidence, Outfit
 from database import DB, get_char_by_uid
 from matching import find_matches
 from entities import MatchCharDict, Character, Match
-from queries import gathercat
+from census import gathercat
 
 
 def get_peer(m: Match) -> dict:

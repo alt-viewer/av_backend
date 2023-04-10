@@ -6,7 +6,7 @@ import logging
 from queue import Queue
 from typing import Callable, Awaitable
 
-from queries import query
+from census import query
 from entities import Character
 from listener.queue import RequestQueue
 from listener.dispatch import Dispatch

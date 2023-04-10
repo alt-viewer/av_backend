@@ -4,7 +4,7 @@ from asyncio import Lock
 from functools import wraps
 import logging
 
-from queries import with_page
+from census import with_page
 from entities import Character
 
 default_logger = logging.getLogger("unnamed RequestQueue")

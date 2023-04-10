@@ -8,7 +8,7 @@ from operator import attrgetter
 from database import DB, match_char_pages
 from entities import Character, Match, MatchCharDict
 from matching.compare import search
-from queries import gathercat
+from census import gathercat
 from utils import pick, replace_with
 
 PAGE_SIZE = 10000

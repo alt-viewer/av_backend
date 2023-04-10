@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 
 
 from listener import LoginListener, event_reducer
-from queries import get_characters
+from census import get_characters
 from database import log_task, push_chars, get_sessions
 from logger import with_logger
 
