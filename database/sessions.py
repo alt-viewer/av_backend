@@ -1,7 +1,7 @@
 from aiohttp import ClientSession
 from motor.motor_asyncio import (
     AsyncIOMotorClient,
-    AsyncIOMotorDatabse,
+    AsyncIOMotorDatabase,
     AsyncIOMotorCollection,
 )
 from typing import AsyncIterator
