@@ -37,7 +37,7 @@ def make_char(char: CharacterPayload) -> Character:
     return Character(
         char.name.first,
         char.character_id,
-        items_from_census(char.items),
+        items_from_census(char.items) if char.items else [],
         char.outfit.alias if char.outfit else None,
         char.outfit.outfit_id if char.outfit else None,
         char.faction_id,
