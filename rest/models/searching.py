@@ -18,12 +18,12 @@ class Outfit(BaseModel):
 
 class CharacterResult(BaseModel):
     name: str
-    id: str
+    id: int
     outfit: Outfit
     faction_id: Factions
     server_id: Servers
     last_login: datetime
     battle_rank: int
 
-    n_items: str
+    n_items: int
     confidence: Confidence
