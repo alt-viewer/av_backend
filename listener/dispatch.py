@@ -8,10 +8,11 @@ from functools import wraps
 
 from listener.queue import RequestQueue
 from listener.filter_item import is_account_wide
-from census import get_characters, with_page
-from database import push_chars, DB, XID
-from entities import Character
-from payloads import ItemAdded
+from census import get_characters
+from utils import with_page
+from database import push_chars, DB
+from entities import Character, XID
+from entities.payloads import ItemAdded
 
 
 Event = NewType("Event", dict)

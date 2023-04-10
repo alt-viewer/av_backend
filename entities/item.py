@@ -1,9 +1,10 @@
 from dataclasses import dataclass
 from datetime import datetime
 from pydantic import BaseModel
-from typing import Optional, TypeAlias
+from typing import TypedDict
 
-from entities.abstracts.jsonable import Jsonable
+from entities.abstracts import Jsonable
+from entities.primitive import XID
 
 
 @dataclass
@@ -37,10 +38,6 @@ class Item(Jsonable):
         return self.__key == other.__key
 
 
-# Necessary because working with Python classes
-# is very slow.
-# Shape: {
-#     xid: str (PS2 item ID),
-#     last_recorded: str (datetime string)
-# }
-ItemDict: TypeAlias = dict
+class ItemDict(TypedDict):
+    xid: XID
+    lastRecorded: datetime

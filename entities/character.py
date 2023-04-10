@@ -5,9 +5,7 @@ from typing import TypeAlias
 
 from entities.item import Item, ItemDict
 from entities.enums import Servers, Factions
-from entities.abstracts.jsonable import Jsonable
-from entities.abstracts.inventory import HasInventory
-from converters import convert_json
+from entities.abstracts import Jsonable, HasInventory
 
 
 @dataclass
@@ -36,7 +34,7 @@ class Character(Jsonable, HasInventory):
             "serverID": self.server_id.value,
             "battleRank": self.battle_rank,
             "lastLogin": self.last_login.isoformat(),
-            "items": convert_json(self.items),
+            "items": [i.json() for i in self.items],
             "_id": self.uid,
         }
 
@@ -110,24 +108,3 @@ class DBCharacter(Character):
 
     def json(self) -> dict:
         return {**super().json(), "peers": self.peers, "eliminated": self.eliminated}
-
-
-@dataclass
-class MatchChar:
-    """A partial Character used for comparing characters."""
-
-    uid: str
-    last_login: datetime
-    items: list[Item]
-    eliminated: list[str]
-
-
-# Necessary because working with Python classes
-# is extremely slow.
-# Shape: {
-#     id: str  (Character UID),
-#     last_login: str (datetime string),
-#     items: list[ItemDict],
-#     eliminated: list[str]  (Character UIDs)
-# }
-MatchCharDict: TypeAlias = dict

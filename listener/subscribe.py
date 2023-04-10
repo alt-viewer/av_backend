@@ -3,7 +3,7 @@ A module to compose the subscription payload for the listener.
 """
 import toolz.curried as toolz
 
-from entities.statics import LIVE_WORLDS
+from entities import LIVE_WORLDS
 
 
 def subscription(payload: dict) -> dict:

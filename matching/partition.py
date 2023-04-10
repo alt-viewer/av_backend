@@ -4,6 +4,7 @@ from entities import MatchCharDict
 
 PARTITION_SIZE = 10
 
+
 # Returning a dict may be awkward for most use cases but it helps when
 # you want to select one group only
 def group(chars: list[MatchCharDict]) -> dict[int, list[MatchCharDict]]:

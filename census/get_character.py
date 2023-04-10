@@ -5,9 +5,9 @@ from typing import Iterable
 
 from queries.api_query import query
 from entities import Factions, Item, Character, Servers
-from payloads import CharacterPayload, ItemObj
+from entities.payloads import CharacterPayload, ItemObj
 from queries.batch import with_page
-from converters import chars_from_census
+from entities.converters import chars_from_census
 
 DEFAULT_FIELDS = [
     "outfit.alias",

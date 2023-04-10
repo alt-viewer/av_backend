@@ -1,4 +1,3 @@
-from entities.character import Character
 import toolz.curried as toolz
 import aiohttp
 import asyncio

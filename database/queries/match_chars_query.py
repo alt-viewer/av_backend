@@ -1,8 +1,8 @@
 import toolz.curried as toolz
 from typing import AsyncGenerator
 
-from entities import MatchCharDict
 from database.types import DB, Collection
+from entities import MatchCharDict
 from database.paging import paged_collection
 
 

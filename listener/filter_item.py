@@ -7,7 +7,7 @@ flag from the `characters_item` collection.
 from json import load
 import toolz.curried as toolz
 
-from payloads import ItemAdded
+from entities.payloads import ItemAdded
 
 # Load whitelist
 with open("data/account_wide.json") as f:

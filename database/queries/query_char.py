@@ -1,7 +1,7 @@
 import toolz.curried as toolz
 
 from entities import Character
-from converters import char_from_db, with_conversion
+from entities.converters import char_from_db, with_conversion
 from database.sessions import DB
 
 
