@@ -34,7 +34,7 @@ def _session_factory():
             if not session or not database:
                 session = ClientSession()
                 database = AsyncIOMotorClient(config["host_name"], config["port"])[
-                    config["dbName"]
+                    config["db_name"]
                 ]
             yield (session, database)
         finally:
