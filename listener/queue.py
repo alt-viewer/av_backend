@@ -1,5 +1,5 @@
 from aiohttp import ClientSession
-from typing import Coroutine, Awaitable, Callable, TypeVar, Generic
+from typing import Awaitable, Callable, TypeVar, Generic, ParamSpec
 from asyncio import Lock
 from functools import wraps
 import logging
@@ -11,17 +11,21 @@ default_logger = logging.getLogger("unnamed RequestQueue")
 
 queue_lock = Lock()
 
+P = ParamSpec("P")
 
-def with_check(func: Callable[..., None]) -> Callable[..., Coroutine[None, None, None]]:
+
+def with_size_check(func: Callable[P, None]) -> Callable[P, Awaitable[None]]:
     """
     After calling the wrapped function, call `RequestQueue._request` if necessary.
     Also logs the ID count.
+    NOTE: the output function is asynchronous.
     """
 
     @wraps(func)
-    async def inner(queue: "RequestQueue", *args, **kwargs):
+    async def inner(*args, **kwargs) -> None:
         async with queue_lock:
-            func(queue, *args, **kwargs)
+            func(*args, **kwargs)
+            queue = args[0]
             queue.logger.debug(f"{len(queue)} IDs in the queue")
             if queue.should_request():
                 await queue._request()
@@ -50,12 +54,12 @@ class RequestQueue(Generic[T]):
         self.logger = logger or default_logger
         self._queue: set[int] = set()
 
-    @with_check
+    @with_size_check
     def extend(self, ids: list[int]) -> None:
         """Add a list of IDs to the queue."""
         self._queue.update(ids)
 
-    @with_check
+    @with_size_check
     def add(self, id: int) -> None:
         """Add an ID to the queue"""
         self._queue.add(id)
