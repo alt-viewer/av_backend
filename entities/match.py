@@ -1,9 +1,28 @@
 from dataclasses import dataclass
-from typing import Iterable
+from typing import Iterable, TypedDict
+from datetime import datetime
 
-from entities.character import MatchCharDict
+from entities.item import Item, ItemDict
 from utils import replace_with
 from entities.abstracts import HasInventory
+from entities.primitive import UID, XID
+
+
+@dataclass
+class MatchChar:
+    """A partial Character used for comparing characters."""
+
+    uid: str
+    last_login: datetime
+    items: list[Item]
+    eliminated: list[str]
+
+
+class MatchCharDict(TypedDict):
+    _id: UID
+    xid: XID
+    lastLogin: datetime
+    items: list[ItemDict]
 
 
 @dataclass
@@ -22,4 +41,4 @@ class Match(HasInventory):
 
 
 def show_matches(ms: Iterable[Match]) -> str:
-    return "[" + ",\n".join(map(str, ms)) + "]"
+    return "[" + ",\n\t".join(map(str, ms)) + "]"
