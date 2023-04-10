@@ -27,7 +27,7 @@ def to_result(match: Character) -> CharacterResult:
     inventory = len(match.items)
     return CharacterResult(
         name=match.name,
-        id=match.id,
+        id=match.xid,
         outfit=Outfit(
             tag=match.outfit_tag,
             id=match.outfit_id,
