@@ -15,6 +15,4 @@ Cursor: TypeAlias = AsyncIOMotorCursor
 Filter = NewType("Filter", dict)
 
 # Domain-specific aliases
-XID = NewType("XID", int)
-UID = NewType("UID", int)
 Collection = Literal["characters"]
