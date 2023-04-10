@@ -4,4 +4,6 @@ pydantic
 fastapi
 uvicorn
 python-dotenv
- 
+aiohttp
+pymongo
+motor
