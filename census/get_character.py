@@ -3,10 +3,10 @@ import toolz.curried as toolz
 from datetime import datetime
 from typing import Iterable
 
-from queries.api_query import query
+from census.api_query import query
 from entities import Factions, Item, Character, Servers
 from entities.payloads import CharacterPayload, ItemObj
-from queries.batch import with_page
+from utils import with_page
 from entities.converters import chars_from_census
 
 DEFAULT_FIELDS = [
