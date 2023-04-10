@@ -37,7 +37,7 @@ async def find_matches(db: DB, char: Character) -> Iterable[Match]:
     """
     # Doing an extra query has a cost but enables
     # requesting the pages in parallel
-    n = await count(db, NodeTypes.CHARACTER)
+    n = await count(db, "characters")
 
     # Spawn page requests and pipe the pages into the matching function
     offsets = range(0, n, PAGE_SIZE)
