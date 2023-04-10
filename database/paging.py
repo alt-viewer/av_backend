@@ -1,5 +1,5 @@
 from motor import MotorCursor
-from typing import AsyncGenerator, TypeAlias, Callable
+from typing import AsyncGenerator, TypeAlias, Callable, TypeVar
 import toolz.curried as toolz
 
 from database.types import DBCollection, Filter
@@ -22,10 +22,13 @@ def id_range_filter(custom_filter: Filter | None = None) -> Callable[[int], Filt
     return add_id
 
 
+T = TypeVar("T")
+
+
 # Adapted from https://www.codementor.io/@arpitbhayani/fast-and-efficient-pagination-in-mongodb-9095flbqr
 async def paged_collection(
     page_size: int, collection: DBCollection, **kwargs
-) -> AsyncGenerator[list[dict], None]:
+) -> AsyncGenerator[list[T], None]:
     """
     Lazily request pages from the collection of size `page_size`.
     !WARNING: it is unsafe to pass a filter that operates on `_id`.
