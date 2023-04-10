@@ -11,7 +11,9 @@ def id_range_filter(custom_filter: Filter | None = None) -> Callable[[int], Filt
     The resulting filter will build on top of `custom_filter`.
     NOTE: `custom_filter` must not define `_id`.
     """
-    filter = (custom_filter or {}) | {"_id": {"$gt": -1}}
+    filter: Filter = Filter(custom_filter or {})
+    # NOTE: The union operator returns `dict[Any, Any]` due to being a `NewType` instance
+    filter.update(Filter({"_id": {"$gt": -1}}))
 
     def add_id(uid: int) -> Filter:
         filter["_id"]["$gt"] = uid
