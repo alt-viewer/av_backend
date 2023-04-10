@@ -6,7 +6,7 @@ from typing import Iterable, Awaitable
 from operator import attrgetter
 
 from database import DB, match_char_pages
-from entities import Character, Match, NodeTypes, MatchCharDict
+from entities import Character, Match, MatchCharDict
 from matching.compare import search
 from queries import gathercat
 from utils import pick, replace_with
