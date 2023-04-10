@@ -5,7 +5,7 @@ import toolz.curried as toolz
 from typing import Iterable, Awaitable
 from operator import attrgetter
 
-from database import count, DB, match_char_pages
+from database import DB, match_char_pages
 from entities import Character, Match, NodeTypes, MatchCharDict
 from matching.compare import search
 from queries import gathercat
@@ -35,11 +35,5 @@ async def find_matches(db: DB, char: Character) -> Iterable[Match]:
     """
     Search for matches for a character in the database
     """
-    # Doing an extra query has a cost but enables
-    # requesting the pages in parallel
-    n = await count(db, "characters")
-
-    # Spawn page requests and pipe the pages into the matching function
-    offsets = range(0, n, PAGE_SIZE)
     as_mc = to_match_char(char)
     return await searches(db, as_mc)
