@@ -5,7 +5,7 @@ import toolz.curried as toolz
 T = TypeVar("T")
 P = ParamSpec("P")
 
-JSONType: TypeAlias = dict[str, int | str | "JSONType"]
+JSONType: TypeAlias = dict[str, int | str | "JSONType" | list["JSONType"]]
 Converter: TypeAlias = Callable[[JSONType], T]
 
 
