@@ -3,7 +3,7 @@ import toolz.curried as toolz
 from datetime import datetime
 from typing import Iterable
 
-from census.api_query import query
+from census.api_query import census_url
 from entities import Factions, Item, Character, Servers
 from entities.payloads import CharacterPayload, ItemObj
 from utils import with_page
@@ -45,7 +45,7 @@ async def get_raw_chars(
     fs = fields or DEFAULT_FIELDS
     js = joins or DEFAULT_JOINS
     joined = ",".join(map(str, ids))
-    url = query("character", params=make_params(fs, js, joined))
+    url = census_url("character", params=make_params(fs, js, joined))
     async with session.get(url) as res:
         if not res.ok:
             raise RuntimeError(res.reason)

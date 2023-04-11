@@ -1,6 +1,7 @@
 from yarl import URL
 from logging import getLogger
 from dotenv import dotenv_values
+from typing import TypeAlias, Any
 
 env_id = dotenv_values(".env").get("SERVICE_ID")
 if env_id is None:
@@ -17,8 +18,11 @@ def http_path(path: str | None, service_id: str) -> str:
     return f"/{service_id}/get/ps2:v2/" + (path or "")
 
 
-def query(
-    path: str | None = None, params: dict | None = None, websocket: bool = False
+Params: TypeAlias = dict[str, str]
+
+
+def census_url(
+    path: str | None = None, params: Params | None = None, websocket: bool = False
 ) -> URL:
     """Construct a PS2 API query."""
     query = params or {}
