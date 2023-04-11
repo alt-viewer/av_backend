@@ -1,7 +1,7 @@
 from entities.character import Character, DBCharacter
 from entities.enums import Servers, Factions, ItemAddedContext
 from entities.statics import LIVE_WORLDS, DEAD_WORLDS
-from entities.item import Item, ItemDict
+from entities.item import Item, ItemDict, ItemInfo
 from entities.match import Match, MatchChar, MatchCharDict, show_matches
 from entities.primitive import XID, UID
 import entities.abstracts
@@ -14,6 +14,7 @@ __all__ = [
     "Factions",
     "Servers",
     "Item",
+    "ItemInfo",
     "Match",
     "DBCharacter",
     "MatchChar",

@@ -5,6 +5,7 @@ from typing import TypedDict
 
 from entities.abstracts import Jsonable
 from entities.primitive import XID
+from entities.enums import Factions
 
 
 @dataclass
@@ -12,7 +13,7 @@ class Item(Jsonable):
     """An account-level item possessed by a character."""
 
     # PS2 ID - referred to as XID in the DB
-    id: int | None
+    id: XID | None
     last_recorded: datetime
     # DB ID - referred to as ID in the DB
     uid: str | None = None
@@ -38,6 +39,20 @@ class Item(Jsonable):
         return self.__key == other.__key
 
 
+@dataclass
+class ItemInfo:
+    xid: XID
+    type_id: XID
+    category_id: XID
+    vehicle_weapon: bool
+    name: str
+    faction_id: Factions
+
+
 class ItemDict(TypedDict):
     xid: XID
+    type_id: XID
+    category_id: XID
+    name: str
+    is_vehicle_weapon: bool
     lastRecorded: datetime
