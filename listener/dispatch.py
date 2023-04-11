@@ -1,10 +1,11 @@
 from asyncio import create_task
 import logging
-from typing import NewType, TypeAlias
-from collections.abc import Callable, Iterable, Awaitable
+from typing import NewType, TypeAlias, TypedDict
+from collections.abc import Callable, Iterable, Awaitable, Sequence
 from aiohttp import ClientSession
 import toolz.curried as toolz
-from functools import wraps
+from functools import wraps, partial
+from datetime import datetime
 
 from listener.queue import RequestQueue
 from listener.filter_item import is_account_wide
@@ -16,7 +17,9 @@ from entities.payloads import ItemAdded
 
 
 Event = NewType("Event", dict)
-CharItem: TypeAlias = dict[XID, XID]  # Mapping of (character XID, item XID)
+CharItem = TypedDict(
+    "CharItem", {"char_id": XID, "item_id": XID, "timestamp": datetime}
+)
 Dispatch: TypeAlias = Callable[[Event], None]
 
 event_logger = logging.getLogger("event reducer")
@@ -34,15 +37,24 @@ def to_item_added(payload: dict) -> ItemAdded:
 
 
 def with_items(func: Callable[[Iterable[int]], Awaitable[list[Character]]]):
+    def update_items(event: CharItem, char: Character) -> Character:
+        char.update(items=[])
+
     @wraps(func)
     async def add_items(
-        session: ClientSession, events: Iterable[CharItem]
+        session: ClientSession, events: Sequence[CharItem]
     ) -> Awaitable[list[Character]]:
-        char_ids = None
-        result = await get_characters(
-            session,
+        char_ids = map(toolz.get("char_id"), events)
+        item_ids = map(toolz.get("item_id"), events)
+        # The order of characters is preserved by this query
+        results = await get_characters(session, char_ids)
+        # TODO: request the ItemInfos, zip them with the characters, then add the items to each character's inventory
+        return toolz.pipe(
+            results,
+            partial(zip, events),
+            toolz.map(toolz.do(lambda pair: update_items(*pair))),
+            list,
         )
-        pass
 
 
 def event_reducer(aiohttp_session: ClientSession, db: DB) -> Dispatch:
