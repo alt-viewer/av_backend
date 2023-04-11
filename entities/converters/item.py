@@ -3,7 +3,8 @@ from datetime import datetime
 from typing import Iterable
 
 from entities.payloads import ItemObj
-from entities import Item
+from entities import Item, ItemInfo, Factions, XID
+from entities.converters.decorators import converter
 
 
 def is_neutral(item: ItemObj) -> bool:
@@ -12,11 +13,6 @@ def is_neutral(item: ItemObj) -> bool:
         return True
     ifaction = item.faction_info.faction_id
     return ifaction == 0 or ifaction == None
-
-
-def is_account_wide(item: ItemObj) -> bool:
-    """Check if an item is owned by the account rather than the character"""
-    return bool(item.account_level)
 
 
 def load_item(i: dict) -> Item:
@@ -42,10 +38,24 @@ def items_from_census(items: list[ItemObj]) -> list[Item]:
     return toolz.pipe(
         items,
         # Remove faction-specific items and character-level items
-        toolz.filter(lambda i: is_neutral(i) and is_account_wide(i)),
+        toolz.filter(lambda i: is_neutral(i)),
         toolz.map(lambda i: Item(i.item_id, now)),
         list,
     )
+
+
+def cast_item_info(d: dict) -> dict:
+    return {
+        "xid": XID(d["item_id"]),
+        "type_id": XID(d["item_type_id"]),
+        "category_id": XID(d["item_category_id"]),
+        "vehicle_weapon": bool(int(d["is_vehicle_weapon"])),
+        "name": d["name"]["en"],
+        "faction_id": Factions(int(d["faction_id"])),
+    }
+
+
+to_item_info = converter(cast_item_info, ItemInfo)
 
 
 def item_intersection(xs: Iterable[Item], ys: Iterable[Item]) -> set[Item]:

@@ -5,7 +5,7 @@ import logging
 from queue import Queue
 from typing import Callable, Awaitable
 
-from census import query
+from census import census_url
 from entities import Character
 from listener.queue import RequestQueue
 from listener.dispatch import Dispatch
@@ -44,7 +44,7 @@ class LoginListener:
         This is the main loop of the listener. It will listen to the
         login event stream and call the given function on login payloads.
         """
-        url = query(websocket=True)
+        url = census_url(websocket=True)
         async with self.session.ws_connect(url) as ws:
             await ws.send_json(PAYLOAD)  # Subscribe to logins
             socket_logger.info("Created websocket connection")

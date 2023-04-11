@@ -4,11 +4,11 @@ from census.get_character import (
     DEFAULT_FIELDS as default_fields,
     DEFAULT_JOINS as default_joins,
 )
-from census.api_query import query
+from census.api_query import census_url
 
 __all__ = [
     "get_characters",
-    "query",
+    "census_url",
     "get_raw_chars",
     "default_fields",
     "default_joins",
