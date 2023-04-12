@@ -1,7 +1,7 @@
 from yarl import URL
 from logging import getLogger
 from dotenv import dotenv_values
-from typing import TypeAlias, Any, TypedDict, TypeVar, Type, overload
+from typing import TypeAlias, Any, TypedDict, TypeVar, Type, overload, Generic
 from collections.abc import Callable, Iterable, Awaitable
 from functools import wraps, partial
 import toolz.curried as toolz
@@ -25,14 +25,17 @@ def http_path(path: str | None, service_id: str) -> str:
     return f"/{service_id}/get/ps2:v2/" + (path or "")
 
 
+class Filter(TypedDict):
+    pass
+
+
+FilterType = TypeVar("FilterType", bound=Filter)
 Params: TypeAlias = dict[str, str]
 Fields: TypeAlias = list[str]
 Joins: TypeAlias = list[str]
-FilterValue: TypeAlias = str | int | list
-FilterInstance = TypeVar("FilterInstance")
-Filter = Type[FilterInstance]
+
 ParamFactory: TypeAlias = Callable[
-    [Fields | None, Joins | None, FilterInstance | None], Params
+    [FilterType | None, Fields | None, Joins | None], Params
 ]
 T = TypeVar("T")
 
@@ -62,7 +65,7 @@ def commas(xs: Iterable[Any]) -> str:
     return ",".join(xs)
 
 
-def convert_filter_value(value: FilterValue) -> str:
+def convert_filter_value(value: object) -> str:
     converters = {
         str: toolz.identity,
         int: str,
@@ -77,9 +80,9 @@ def convert_filter_value(value: FilterValue) -> str:
 def param_factory(default_fields: Fields, default_joins: Joins) -> ParamFactory:
     @toolz.curry
     def factory(
+        filters: FilterType | None = None,
         fields: Fields | None = None,
         joins: Joins | None = None,
-        filters: Filter | None = None,
     ) -> Params:
         return {
             "c:lang": "en",
@@ -108,17 +111,17 @@ def _census_query(
     make_params: ParamFactory,
     convert: Converter,
 ) -> Callable[
-    [ClientSession, FilterInstance | None, Fields | None, Joins | None],
+    [ClientSession, FilterType | None, Fields | None, Joins | None],
     Awaitable[list[T]],
 ]:
     @with_conversion(convert)
     async def query(
         session: ClientSession,
-        filters: FilterInstance | None = None,
+        filters: FilterType | None = None,
         fields: Fields | None = None,
         joins: Joins | None = None,
     ) -> list[JSON]:
-        params = make_params(fields, joins, filters)
+        params = make_params(filters, fields, joins)
         url = census_url(path, params)
         async with session.get(url) as response:
             if not response.ok:
@@ -158,14 +161,8 @@ class census_query:
         )
 
 
-class filtered_census_query(Generic[FilterInstance]):
-    def __init__(
-        self,
-        path: str,
-        make_params: ParamFactory,
-        convert: Converter,
-        filter_type: Type[FilterInstance],
-    ):
+class filtered_census_query(Generic[FilterType]):
+    def __init__(self, path: str, make_params: ParamFactory, convert: Converter):
         self.path = path
         self.make_params = make_params
         self.convert = convert
@@ -173,7 +170,7 @@ class filtered_census_query(Generic[FilterInstance]):
     async def __call__(
         self,
         session: ClientSession,
-        filters: FilterInstance,
+        filters: FilterType,
         fields: Fields | None = None,
         joins: Joins | None = None,
     ) -> list[T]:
@@ -192,7 +189,7 @@ def finalise_query(
 @overload
 def finalise_query(
     query: filtered_census_query,
-) -> Callable[[ClientSession, FilterInstance], Awaitable[list[T]]]:
+) -> Callable[[ClientSession, FilterType], Awaitable[list[T]]]:
     ...
 
 
