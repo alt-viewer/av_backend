@@ -5,8 +5,9 @@ import toolz.curried as toolz
 T = TypeVar("T")
 P = ParamSpec("P")
 
-JSONType: TypeAlias = dict[str, int | str | "JSONType" | list["JSONType"]]
-Converter: TypeAlias = Callable[[JSONType], T]
+JSONValue: TypeAlias = int | str | "JSON" | list["JSON"]
+JSON: TypeAlias = dict[str, JSONValue]
+Converter: TypeAlias = Callable[[JSON], T]
 
 
 def with_conversion(converter: Converter):
@@ -16,7 +17,7 @@ def with_conversion(converter: Converter):
     """
 
     def decorate(
-        func: Callable[P, Awaitable[list[JSONType]]]
+        func: Callable[P, Awaitable[list[JSON]]]
     ) -> Callable[P, Awaitable[list[T]]]:
         @wraps(func)
         async def inner(*args: P.args, **kwargs: P.kwargs) -> list[T]:
