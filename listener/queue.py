@@ -1,6 +1,6 @@
 import logging
 from asyncio import Lock
-from collections.abc import Awaitable, Callable, Iterable
+from collections.abc import Awaitable, Callable, Iterable, Coroutine
 from functools import wraps
 from typing import Generic, ParamSpec, TypeVar
 
@@ -15,7 +15,9 @@ queue_lock = Lock()
 P = ParamSpec("P")
 
 
-def with_size_check(func: Callable[P, None]) -> Callable[P, Awaitable[None]]:
+def with_size_check(
+    func: Callable[P, None]
+) -> Callable[P, Coroutine[None, None, None]]:
     """
     After calling the wrapped function, call `RequestQueue._request` if necessary.
     Also logs the ID count.
