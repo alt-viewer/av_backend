@@ -1,7 +1,8 @@
-from pydantic import BaseModel
 from datetime import datetime
 
-from entities import Servers, Factions, ItemAddedContext
+from pydantic import BaseModel
+
+from entities import XID, Factions, ItemAddedContext, Servers
 
 
 class FactionInfo(BaseModel):
@@ -9,7 +10,7 @@ class FactionInfo(BaseModel):
 
 
 class ItemObj(BaseModel):
-    item_id: int
+    item_id: XID
     stack_size: int | None
     faction_info: FactionInfo | None
     account_level: bool | None
@@ -17,19 +18,19 @@ class ItemObj(BaseModel):
 
 class ItemAdded(BaseModel):
     context: ItemAddedContext
-    character_id: int
-    item_id: int
+    character_id: XID
+    item_id: XID
     world_id: Servers
     event_name: str
     timestamp: datetime
-    zone_id: int
+    zone_id: XID
     item_count: int
 
 
 class OutfitObj(BaseModel):
-    outfit_id: int
+    outfit_id: XID
     member_since_date: datetime
-    outfit_id_merged: int
+    outfit_id_merged: XID
     name: str
     name_lower: str
     alias: str | None
@@ -57,6 +58,6 @@ class CharacterPayload(BaseModel):
     world_id: Servers
     times: TimesObj
     name: NameObj
-    character_id: int
+    character_id: XID
     faction_id: Factions
     battle_rank: BattleRankObj
