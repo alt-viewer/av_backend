@@ -1,10 +1,11 @@
-from aiohttp import ClientSession
-from typing import Awaitable, Callable, TypeVar, Generic, ParamSpec
-from asyncio import Lock
-from functools import wraps
 import logging
+from asyncio import Lock
+from collections.abc import Awaitable, Callable, Iterable
+from functools import wraps
+from typing import Generic, ParamSpec, TypeVar
 
-from utis import with_page
+from aiohttp import ClientSession
+
 from entities import Character
 
 default_logger = logging.getLogger("unnamed RequestQueue")
@@ -43,7 +44,7 @@ class RequestQueue(Generic[T]):
 
     def __init__(
         self,
-        requester: Callable[[set[int]], Awaitable[list[T]]],
+        requester: Callable[[Iterable[T]], Awaitable[list[T]]],
         put: Callable[[list[T]], Awaitable[None]],
         min_size: int = 20,
         logger: logging.Logger | None = None,
@@ -52,17 +53,17 @@ class RequestQueue(Generic[T]):
         self.put = put
         self.min = min_size
         self.logger = logger or default_logger
-        self._queue: set[int] = set()
+        self._queue: set[T] = set()
 
     @with_size_check
-    def extend(self, ids: list[int]) -> None:
+    def extend(self, xs: Iterable[T]) -> None:
         """Add a list of IDs to the queue."""
-        self._queue.update(ids)
+        self._queue.update(xs)
 
     @with_size_check
-    def add(self, id: int) -> None:
+    def add(self, x: T) -> None:
         """Add an ID to the queue"""
-        self._queue.add(id)
+        self._queue.add(x)
 
     async def _request(self) -> None:
         """
@@ -74,6 +75,7 @@ class RequestQueue(Generic[T]):
         self._queue.clear()
         await self.put(chars)
 
+    @property
     def should_request(self) -> bool:
         return len(self._queue) >= self.min
 
