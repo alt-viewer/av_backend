@@ -1,20 +1,20 @@
-from asyncio import create_task
 import logging
-from typing import NewType, TypeAlias, TypedDict
-from collections.abc import Callable, Iterable, Awaitable, Sequence
-from aiohttp import ClientSession
-import toolz.curried as toolz
-from functools import wraps, partial
+from asyncio import create_task, gather
+from collections.abc import Awaitable, Callable, Iterable, Sequence
 from datetime import datetime
+from functools import partial, wraps
+from typing import NewType, TypeAlias, TypedDict
 
-from listener.queue import RequestQueue
-from listener.filter_item import is_account_wide
-from census import get_characters
-from utils import with_page
-from database import push_chars, DB
-from entities import Character, XID
+import toolz.curried as toolz
+from aiohttp import ClientSession
+
+from census import get_characters, get_items
+from database import DB, push_chars
+from entities import XID, Character, Item, ItemInfo
 from entities.payloads import ItemAdded
-
+from listener.filter_item import is_account_wide
+from listener.queue import RequestQueue
+from utils import with_page
 
 Event = NewType("Event", dict)
 CharItem = TypedDict(
@@ -36,28 +36,43 @@ def to_item_added(payload: dict) -> ItemAdded:
     )
 
 
-def with_items(func: Callable[[Iterable[int]], Awaitable[list[Character]]]):
-    def update_items(event: CharItem, char: Character) -> Character:
-        char.update(items=[])
-
-    @wraps(func)
-    async def add_items(
-        session: ClientSession, events: Sequence[CharItem]
-    ) -> Awaitable[list[Character]]:
-        char_ids = map(toolz.get("char_id"), events)
-        item_ids = map(toolz.get("item_id"), events)
-        # The order of characters is preserved by this query
-        results = await get_characters(session, char_ids)
-        # TODO: request the ItemInfos, zip them with the characters, then add the items to each character's inventory
-        return toolz.pipe(
-            results,
-            partial(zip, events),
-            toolz.map(toolz.do(lambda pair: update_items(*pair))),
-            list,
-        )
+def to_char_item(event: ItemAdded) -> CharItem:
+    return {
+        "char_id": event.character_id,
+        "item_id": event.item_id,
+        "timestamp": event.timestamp,
+    }
 
 
-def event_reducer(aiohttp_session: ClientSession, db: DB) -> Dispatch:
+def to_item(info: ItemInfo, timestamp: datetime) -> Item:
+    return Item(info.xid, timestamp)
+
+
+def add_item(char: Character, item: ItemInfo, timestamp: datetime) -> Character:
+    char.update(items=[*char.items, to_item(item, timestamp)])
+    return char
+
+
+@toolz.curry
+async def update_inventories(
+    session: ClientSession, events: Sequence[CharItem]
+) -> Iterable[Character]:
+    char_ids = map(toolz.get("char_id"), events)
+    item_ids = map(toolz.get("item_id"), events)
+    timestamps = map(toolz.get("timestamp"), events)
+
+    # The order of IDs is preserved by the Census API
+    chars, items = await gather(
+        get_characters(session, char_ids),
+        get_items(session, {"item_ids": list(item_ids)}),
+    )
+    return toolz.pipe(
+        zip(chars, items, timestamps),
+        toolz.map(lambda pair: add_item(*pair)),
+    )
+
+
+def event_reducer(session: ClientSession, db: DB) -> Dispatch:
     """
     Get a dispatch function.
     Given a PS2 websocket event, this function will schedule some task to handle it.
@@ -69,9 +84,11 @@ def event_reducer(aiohttp_session: ClientSession, db: DB) -> Dispatch:
             Adds the item to the owner's inventory if the owner is already in the database.
             Otherwise, inserts the character into the database.
     """
-    SUPPORTED = {"PlayerLogin", "ItemAdded"}
-    char_queue: RequestQueue[int] = RequestQueue(
-        with_page()(get_characters(aiohttp_session)),
+    SUPPORTED = {
+        "ItemAdded",
+    }
+    char_queue: RequestQueue[CharItem] = RequestQueue(
+        update_inventories(session),
         push_chars(db),
         logger=char_logger,
     )
@@ -83,11 +100,13 @@ def event_reducer(aiohttp_session: ClientSession, db: DB) -> Dispatch:
             event_logger.warn(f"Ignoring event: {event}")
 
         # Filter ItemAdded events for account wide items
-        if event_type == "ItemAdded" and is_account_wide(to_item_added(payload)):
-            pass
+        if event_type == "ItemAdded" and is_account_wide(
+            item_added := to_item_added(payload)
+        ):
+            char_item = to_char_item(item_added)
 
         # !TODO: stop requesting character items and take this item forward
-        create_task(char_queue.add(payload["character_id"]))
+        create_task(char_queue.add(char_item))
         char_logger.debug(f"Queued character {payload['character_id']}")
 
     return dispatch
