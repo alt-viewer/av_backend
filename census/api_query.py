@@ -1,7 +1,7 @@
 from yarl import URL
 from logging import getLogger
 from dotenv import dotenv_values
-from typing import TypeAlias, Any, TypedDict, TypeVar
+from typing import TypeAlias, Any, TypedDict, TypeVar, Type, overload
 from collections.abc import Callable, Iterable, Awaitable
 from functools import wraps, partial
 import toolz.curried as toolz
@@ -29,11 +29,12 @@ Params: TypeAlias = dict[str, str]
 Fields: TypeAlias = list[str]
 Joins: TypeAlias = list[str]
 FilterValue: TypeAlias = str | int | list
-Filter = TypedDict("Filter", {"field_name": str, "field_value": FilterValue})
-ParamFactory: TypeAlias = Callable[[Fields, Joins, list[Filter]], Params]
+FilterInstance = TypeVar("FilterInstance")
+Filter = Type[FilterInstance]
+ParamFactory: TypeAlias = Callable[
+    [Fields | None, Joins | None, FilterInstance | None], Params
+]
 T = TypeVar("T")
-
-query_logger = getLogger("census query")
 
 
 def _census_url(
@@ -75,12 +76,16 @@ def convert_filter_value(value: FilterValue) -> str:
 
 def param_factory(default_fields: Fields, default_joins: Joins) -> ParamFactory:
     @toolz.curry
-    def factory(fields: Fields, joins: Joins, filters: list[Filter]) -> Params:
+    def factory(
+        fields: Fields | None = None,
+        joins: Joins | None = None,
+        filters: Filter | None = None,
+    ) -> Params:
         return {
             "c:lang": "en",
-            "c:show": commas(fields or default_fields),
-            "c:resolve": commas(joins or default_joins),
-        } | {f["field_name"]: convert_filter_value(f["field_value"]) for f in filters}
+            "c:show": commas(fields if fields is not None else default_fields),
+            "c:resolve": commas(joins if joins is not None else default_joins),
+        } | {key: convert_filter_value(value) for key, value in (filters or {}).items()}
 
     return factory
 
@@ -93,29 +98,103 @@ def result_of(path: str, json: JSON) -> list[JSON]:
     return xs
 
 
-def default_fail(r: ClientResponse) -> None:
-    query_logger.error(
-        f'Request for {r.url} failed with status {r.status} because "{r.reason}"'
-    )
-
-
-async def census_query(
+# I couldn't find a way to have two signatures for `census_query`:
+#   - `Filter` type provided: require `Filter` with filled values in the output function
+#   - No filter: omit the filter argument in the output function
+# My solution was to split it into two functions and make the `filters` argument optional in `query`.
+# I've made two public wrappers: one with a `Filter` and one without
+def _census_query(
     path: str,
     make_params: ParamFactory,
     convert: Converter,
-    on_fail: Callable[[ClientResponse], None] | None = None,
-) -> Callable[[ClientSession, list[Filter]], Awaitable[T | None]]:
-    @toolz.curry
+) -> Callable[
+    [ClientSession, FilterInstance | None, Fields | None, Joins | None],
+    Awaitable[list[T]],
+]:
     @with_conversion(convert)
     async def query(
-        session: ClientSession, fields: Fields, joins: Joins, filters: list[Filter]
-    ) -> list[JSON] | None:
+        session: ClientSession,
+        filters: FilterInstance | None = None,
+        fields: Fields | None = None,
+        joins: Joins | None = None,
+    ) -> list[JSON]:
         params = make_params(fields, joins, filters)
         url = census_url(path, params)
         async with session.get(url) as response:
             if not response.ok:
-                return (on_fail or default_fail)(response)
+                raise RuntimeError(
+                    f'Request for {response.url} failed with status {response.status} because "{response.reason}"'
+                )
             json = await response.json()
         return result_of(path, json)
 
     return query
+
+
+from typing import Generic
+
+
+# I made this a callable class because `Callable` can't have optional arguments.
+# I decided to name them with snake_case to make it look like a function to a user
+class census_query:
+    def __init__(
+        self,
+        path: str,
+        make_params: ParamFactory,
+        convert: Converter,
+    ):
+        self.path = path
+        self.make_params = make_params
+        self.convert = convert
+
+    async def __call__(
+        self,
+        session: ClientSession,
+        fields: Fields | None = None,
+        joins: Joins | None = None,
+    ) -> list[T]:
+        return await _census_query(self.path, self.make_params, self.convert)(
+            session, None, fields, joins
+        )
+
+
+class filtered_census_query(Generic[FilterInstance]):
+    def __init__(
+        self,
+        path: str,
+        make_params: ParamFactory,
+        convert: Converter,
+        filter_type: Type[FilterInstance],
+    ):
+        self.path = path
+        self.make_params = make_params
+        self.convert = convert
+
+    async def __call__(
+        self,
+        session: ClientSession,
+        filters: FilterInstance,
+        fields: Fields | None = None,
+        joins: Joins | None = None,
+    ) -> list[T]:
+        return await _census_query(self.path, self.make_params, self.convert)(
+            session, filters, fields, joins
+        )
+
+
+@overload
+def finalise_query(
+    query: census_query,
+) -> Callable[[ClientSession], Awaitable[list[T]]]:
+    ...
+
+
+@overload
+def finalise_query(
+    query: filtered_census_query,
+) -> Callable[[ClientSession, FilterInstance], Awaitable[list[T]]]:
+    ...
+
+
+def finalise_query(query):
+    return partial(query, fields=None, joins=None)
