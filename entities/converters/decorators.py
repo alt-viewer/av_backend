@@ -6,7 +6,9 @@ import toolz.curried as toolz
 T = TypeVar("T")
 P = ParamSpec("P")
 
-JSONValue: TypeAlias = int | str | "JSON" | list["JSON"]
+# Forward references can't be used in unions
+# See https://stackoverflow.com/a/72644857
+JSONValue: TypeAlias = "int | str | JSON | list[JSON]"
 JSON: TypeAlias = dict[str, JSONValue]
 Converter: TypeAlias = Callable[[JSON], T]
 
