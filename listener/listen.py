@@ -18,7 +18,7 @@ from listener.subscribe import (
 )
 
 # Listening to player logins
-PAYLOAD = toolz.pipe(
+DEFAULT_PAYLOAD = toolz.pipe(
     {},
     subscription,
     with_worlds(LIVE_WORLDS),
@@ -30,13 +30,19 @@ character_logger = logging.getLogger("character")
 
 
 class LoginListener:
-    def __init__(self, session: aiohttp.ClientSession, dispatch: Dispatch):
+    def __init__(
+        self,
+        session: aiohttp.ClientSession,
+        dispatch: Dispatch,
+        payload: dict | None = None,
+    ):
         """
         func is an async function that will be called on LoginPayloads.
         It should perform a side effect on the data.
         """
         self.session = session
         self.dispatch = dispatch
+        self.payload = payload if payload is not None else DEFAULT_PAYLOAD
         self.run = True
 
     async def listen(self):
@@ -46,7 +52,7 @@ class LoginListener:
         """
         url = census_url(websocket=True)
         async with self.session.ws_connect(url) as ws:
-            await ws.send_json(PAYLOAD)  # Subscribe to logins
+            await ws.send_json(self.payload)  # Subscribe
             socket_logger.info("Created websocket connection")
             while self.run:
                 res = await ws.receive_json()
