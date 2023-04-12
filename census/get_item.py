@@ -1,18 +1,18 @@
-from aiohttp import ClientSession
-import toolz.curried as toolz
 from collections.abc import Iterable
 from logging import getLogger
 from typing import TypedDict
 
+import toolz.curried as toolz
+from aiohttp import ClientSession
+
 from census.api_query import (
-    param_factory,
+    Filter,
     filtered_census_query,
     finalise_query,
-    Filter,
+    param_factory,
 )
 from entities import XID, ItemInfo
 from entities.converters import to_item_info
-
 
 make_params = param_factory(
     [
@@ -35,5 +35,5 @@ _get_items: filtered_census_query[ItemInfoFilter] = filtered_census_query(
     "item", make_params, to_item_info
 )
 
-async def get_items(session: ClientSession, ids: list[XID]) -> list[ItemInfo]:
-    return await get_items(session, ItemInfoFilters({"item_id": ids}))
+
+get_items = finalise_query(_get_items)

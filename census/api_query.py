@@ -1,14 +1,14 @@
-from yarl import URL
+from collections.abc import Awaitable, Callable, Iterable
+from functools import partial, wraps
 from logging import getLogger
-from dotenv import dotenv_values
-from typing import TypeAlias, Any, TypedDict, TypeVar, Type, overload, Generic
-from collections.abc import Callable, Iterable, Awaitable
-from functools import wraps, partial
-import toolz.curried as toolz
-from aiohttp import ClientSession, ClientResponse
+from typing import Any, Generic, Type, TypeAlias, TypedDict, TypeVar, overload
 
-from entities import XID
-from entities.converters import Converter, with_conversion, JSON, JSONValue
+import toolz.curried as toolz
+from aiohttp import ClientResponse, ClientSession
+from dotenv import dotenv_values
+from yarl import URL
+
+from entities.converters import JSON, Converter, JSONValue, with_conversion
 
 env_id = dotenv_values(".env").get("SERVICE_ID")
 if env_id is None:
@@ -134,9 +134,6 @@ def _census_query(
     return query
 
 
-from typing import Generic
-
-
 # I made this a callable class because `Callable` can't have optional arguments.
 # I decided to name them with snake_case to make it look like a function to a user
 class census_query:
@@ -179,19 +176,6 @@ class filtered_census_query(Generic[FilterType]):
         )
 
 
-@overload
-def finalise_query(
-    query: census_query,
-) -> Callable[[ClientSession], Awaitable[list[T]]]:
-    ...
-
-
-@overload
-def finalise_query(
-    query: filtered_census_query,
-) -> Callable[[ClientSession, FilterType], Awaitable[list[T]]]:
-    ...
-
-
 def finalise_query(query):
+    """Prevent overriding the fields and joins of a query"""
     return partial(query, fields=None, joins=None)
