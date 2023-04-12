@@ -27,8 +27,11 @@ def http_path(path: str | None, service_id: str) -> str:
 Params: TypeAlias = dict[str, str]
 
 
-def census_url(
-    path: str | None = None, params: Params | None = None, websocket: bool = False
+def _census_url(
+    service_id: str,
+    path: str | None = None,
+    params: Params | None = None,
+    websocket: bool = False,
 ) -> URL:
     """Construct a PS2 API query."""
     query = params or {}
@@ -40,6 +43,9 @@ def census_url(
         path=full_path,
         query=query,
     )
+
+
+census_url = partial(_census_url, service_id)
 
 
 def commas(xs: Iterable[Any]) -> str:
