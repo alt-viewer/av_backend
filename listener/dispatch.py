@@ -3,7 +3,8 @@ from asyncio import create_task, gather
 from collections.abc import Awaitable, Callable, Iterable, Sequence
 from datetime import datetime
 from functools import partial, wraps
-from typing import NewType, TypeAlias, TypedDict
+from typing import NewType, TypeAlias, NamedTuple
+from operator import attrgetter
 
 import toolz.curried as toolz
 from aiohttp import ClientSession
@@ -17,10 +18,10 @@ from listener.queue import RequestQueue
 from utils import with_page
 
 Event = NewType("Event", dict)
-CharItem = TypedDict(
-    "CharItem", {"char_id": XID, "item_id": XID, "timestamp": datetime}
-)
 Dispatch: TypeAlias = Callable[[Event], None]
+CharItem = NamedTuple(
+    "CharItem", [("char_id", XID), ("item_id", XID), ("timestamp", datetime)]
+)
 
 event_logger = logging.getLogger("event reducer")
 char_logger = logging.getLogger("character")
@@ -37,11 +38,11 @@ def to_item_added(payload: dict) -> ItemAdded:
 
 
 def to_char_item(event: ItemAdded) -> CharItem:
-    return {
-        "char_id": event.character_id,
-        "item_id": event.item_id,
-        "timestamp": event.timestamp,
-    }
+    return CharItem(
+        event.character_id,
+        event.item_id,
+        event.timestamp,
+    )
 
 
 def to_item(info: ItemInfo, timestamp: datetime) -> Item:
@@ -57,9 +58,9 @@ def add_item(char: Character, item: ItemInfo, timestamp: datetime) -> Character:
 async def update_inventories(
     session: ClientSession, events: Sequence[CharItem]
 ) -> Iterable[Character]:
-    char_ids = map(toolz.get("char_id"), events)
-    item_ids = map(toolz.get("item_id"), events)
-    timestamps = map(toolz.get("timestamp"), events)
+    char_ids = map(attrgetter("char_id"), events)
+    item_ids = map(attrgetter("item_id"), events)
+    timestamps = map(attrgetter("timestamp"), events)
 
     # The order of IDs is preserved by the Census API
     chars, items = await gather(
@@ -104,9 +105,7 @@ def event_reducer(session: ClientSession, db: DB) -> Dispatch:
             item_added := to_item_added(payload)
         ):
             char_item = to_char_item(item_added)
-
-        # !TODO: stop requesting character items and take this item forward
-        create_task(char_queue.add(char_item))
-        char_logger.debug(f"Queued character {payload['character_id']}")
+            create_task(char_queue.add(char_item))
+            char_logger.debug(f"Queued character {payload['character_id']}")
 
     return dispatch
