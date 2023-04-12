@@ -28,7 +28,7 @@ def with_conversion(converter: Converter):
     return decorate
 
 
-def converter(cast: Callable[[JSONType], dict[str, Any]], construct: Type) -> Converter:
+def converter(cast: Callable[[JSON], dict[str, Any]], construct: Type) -> Converter:
     return toolz.compose(
         lambda d: construct(**d),
         cast,
