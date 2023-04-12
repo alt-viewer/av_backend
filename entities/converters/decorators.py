@@ -1,12 +1,14 @@
-from typing import Callable, TypeVar, ParamSpec, Awaitable, Any, TypeAlias, Type
 from functools import wraps
+from typing import Any, Awaitable, Callable, ParamSpec, Type, TypeAlias, TypeVar
+
 import toolz.curried as toolz
 
 T = TypeVar("T")
 P = ParamSpec("P")
 
-JSONType: TypeAlias = dict[str, int | str | "JSONType"]
-Converter: TypeAlias = Callable[[JSONType], T]
+JSONValue: TypeAlias = int | str | "JSON" | list["JSON"]
+JSON: TypeAlias = dict[str, JSONValue]
+Converter: TypeAlias = Callable[[JSON], T]
 
 
 def with_conversion(converter: Converter):
@@ -16,7 +18,7 @@ def with_conversion(converter: Converter):
     """
 
     def decorate(
-        func: Callable[P, Awaitable[list[JSONType]]]
+        func: Callable[P, Awaitable[list[JSON]]]
     ) -> Callable[P, Awaitable[list[T]]]:
         @wraps(func)
         async def inner(*args: P.args, **kwargs: P.kwargs) -> list[T]:
@@ -28,7 +30,8 @@ def with_conversion(converter: Converter):
     return decorate
 
 
-def converter(cast: Callable[[JSONType], dict[str, Any]], construct: Type) -> Converter:
+def converter(cast: Callable[[JSON], dict[str, Any]], construct: Type) -> Converter:
+    """Make a function that converts a JSON response to the desired type"""
     return toolz.compose(
         lambda d: construct(**d),
         cast,

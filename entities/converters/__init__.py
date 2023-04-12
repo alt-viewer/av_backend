@@ -12,7 +12,13 @@ from entities.converters.char import (
     chars_from_census,
     char_from_db,
 )
-from entities.converters.decorators import with_conversion, Converter, converter
+from entities.converters.decorators import (
+    with_conversion,
+    Converter,
+    converter,
+    JSON,
+    JSONValue,
+)
 
 __all__ = [
     "item_from_db",
@@ -26,4 +32,6 @@ __all__ = [
     "with_conversion",
     "Converter",
     "converter",
+    "JSON",
+    "JSONValue",
 ]
