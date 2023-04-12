@@ -1,6 +1,6 @@
 import logging
 from asyncio import Lock
-from collections.abc import Awaitable, Callable, Iterable, Coroutine
+from collections.abc import Awaitable, Callable, Iterable, Coroutine, Hashable
 from functools import wraps
 from typing import Generic, ParamSpec, TypeVar
 
@@ -36,7 +36,7 @@ def with_size_check(
     return inner
 
 
-T = TypeVar("T")
+T = TypeVar("T", bound=Hashable)
 
 
 class RequestQueue(Generic[T]):
