@@ -1,7 +1,7 @@
 from collections.abc import Awaitable, Callable, Iterable
 from functools import partial, wraps
 from logging import getLogger
-from typing import Any, Generic, Type, TypeAlias, TypedDict, TypeVar, overload
+from typing import Any, Generic, TypeAlias, TypedDict, TypeVar
 
 import toolz.curried as toolz
 from aiohttp import ClientResponse, ClientSession
