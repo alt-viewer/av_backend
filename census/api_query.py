@@ -4,11 +4,11 @@ from logging import getLogger
 from typing import Any, Generic, TypeAlias, TypedDict, TypeVar
 
 import toolz.curried as toolz
-from aiohttp import ClientResponse, ClientSession
+from aiohttp import ClientSession
 from dotenv import dotenv_values
 from yarl import URL
 
-from entities.converters import JSON, Converter, JSONValue, with_conversion
+from entities.converters import JSON, Converter, with_conversion
 
 env_id = dotenv_values(".env").get("SERVICE_ID")
 if env_id is None:
@@ -78,6 +78,13 @@ def convert_filter_value(value: object) -> str:
 
 
 def param_factory(default_fields: Fields, default_joins: Joins) -> ParamFactory:
+    """
+    Create a factory for Census API query params.
+    `fields`: the fields to project. Corresponds to c:show.
+    `joins`: the collections to join. Corresponds to c:resolve.
+    See also: http://census.daybreakgames.com/#query-commands
+    """
+
     @toolz.curry
     def factory(
         filters: FilterType | None = None,
@@ -137,6 +144,11 @@ def _census_query(
 # I made this a callable class because `Callable` can't have optional arguments.
 # I decided to name them with snake_case to make it look like a function to a user
 class census_query:
+    """
+    Create a query for a collection. Does not allow filtering such as `item_id=4`.
+    Use `filtered_census_query` for that.
+    """
+
     def __init__(
         self,
         path: str,
@@ -159,6 +171,8 @@ class census_query:
 
 
 class filtered_census_query(Generic[FilterType]):
+    """See `census_query`"""
+
     def __init__(self, path: str, make_params: ParamFactory, convert: Converter):
         self.path = path
         self.make_params = make_params
