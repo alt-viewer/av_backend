@@ -21,7 +21,7 @@ make_params = param_factory(
 
 
 class ItemInfoFilter(Filter):
-    item_ids: list[XID]
+    item_id: list[XID]
 
 
 _get_items: filtered_census_query[ItemInfoFilter] = filtered_census_query(
