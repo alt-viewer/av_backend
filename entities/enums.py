@@ -36,3 +36,4 @@ class ItemAddedContext(Enum):
     PcZoneReceiveEscrowPackage = "PcZone::ReceiveEscrowPackage"
     RedeemTerminalProxyItem = "RedeemTerminalProxyItem"
     GenericTerminalTransaction = "GenericTerminalTransaction"
+    CTFTakeFlag = "CaptureTheFlag.TakeFlag"
