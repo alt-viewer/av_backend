@@ -1,7 +1,6 @@
 from census.api_query import (
     Filter,
     filtered_census_query,
-    finalise_query,
     param_factory,
 )
 from entities import XID, ItemInfo
@@ -24,9 +23,6 @@ class ItemInfoFilter(Filter):
     item_id: list[XID]
 
 
-_get_items: filtered_census_query[ItemInfoFilter] = filtered_census_query(
+get_items: filtered_census_query[ItemInfoFilter] = filtered_census_query(
     "item", make_params, to_item_info
 )
-
-
-get_items = finalise_query(_get_items)

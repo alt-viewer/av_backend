@@ -188,8 +188,3 @@ class filtered_census_query(Generic[FilterType]):
         return await _census_query(self.path, self.make_params, self.convert)(
             session, filters, fields, joins
         )
-
-
-def finalise_query(query):
-    """Prevent overriding the fields and joins of a query"""
-    return partial(query, fields=None, joins=None)
