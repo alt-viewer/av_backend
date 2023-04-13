@@ -77,7 +77,6 @@ class RequestQueue(Generic[T]):
         self._queue.clear()
         await self.put(chars)
 
-    @property
     def should_request(self) -> bool:
         return len(self._queue) >= self.min
 
