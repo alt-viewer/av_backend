@@ -65,7 +65,7 @@ async def update_inventories(
     # The order of IDs is preserved by the Census API
     chars, items = await gather(
         get_characters(session, char_ids),
-        get_items(session, {"item_ids": list(item_ids)}),
+        get_items(session, {"item_id": list(item_ids)}),
     )
     return toolz.pipe(
         zip(chars, items, timestamps),
