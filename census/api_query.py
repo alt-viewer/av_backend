@@ -69,7 +69,7 @@ def convert_filter_value(value: object) -> str:
     converters = {
         str: toolz.identity,
         int: str,
-        list: toolz.map(str),
+        list: toolz.compose(list, toolz.map(str)),
     }
     t = type(value)
     if t not in converters:
