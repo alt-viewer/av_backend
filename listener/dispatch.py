@@ -57,7 +57,7 @@ def add_item(char: Character, item: ItemInfo, timestamp: datetime) -> Character:
 @toolz.curry
 async def update_inventories(
     session: ClientSession, events: Sequence[CharItem]
-) -> Iterable[Character]:
+) -> list[Character]:
     char_ids = map(attrgetter("char_id"), events)
     item_ids = map(attrgetter("item_id"), events)
     timestamps = map(attrgetter("timestamp"), events)
@@ -70,6 +70,7 @@ async def update_inventories(
     return toolz.pipe(
         zip(chars, items, timestamps),
         toolz.map(lambda pair: add_item(*pair)),
+        list,
     )
 
 
