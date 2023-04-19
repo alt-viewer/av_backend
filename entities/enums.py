@@ -13,6 +13,7 @@ class Servers(Enum):
 
 
 class Factions(Enum):
+    NEUTRAL = 0
     VS = 1
     NC = 2
     TR = 3
@@ -37,3 +38,5 @@ class ItemAddedContext(Enum):
     RedeemTerminalProxyItem = "RedeemTerminalProxyItem"
     GenericTerminalTransaction = "GenericTerminalTransaction"
     CTFTakeFlag = "CaptureTheFlag.TakeFlag"
+    ReprocessAllSkillItemGrants = "ReprocessAllSkillItemGrants"
+    Unknown = "Unknown"
