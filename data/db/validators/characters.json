@@ -33,12 +33,12 @@
         "description": "'serverID' must be an integer in the range (1, 100) and is required"
       },
       "outfitID": {
-        "bsonType": "int",
+        "bsonType": ["null", "int"],
         "minimum": 0,
         "description": "'outfitID' must be an integer above 0"
       },
       "outfitTag": {
-        "bsonType": "string",
+        "bsonType": ["null", "string"],
         "pattern": "^.+$",
         "description": "'outfitTag' must be a non-empty string"
       },
@@ -48,7 +48,7 @@
       },
       "battleRank": {
         "bsonType": "int",
-        "minimum": 1,
+        "minimum": 0,
         "maximum": 120,
         "description": "'battleRank' must be an integer in the range (1, 120) and is required"
       },
