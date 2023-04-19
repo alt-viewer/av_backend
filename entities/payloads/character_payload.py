@@ -1,8 +1,10 @@
 from datetime import datetime
-
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
+from logging import getLogger
 
 from entities import XID, Factions, ItemAddedContext, Servers
+
+validation_logger = getLogger("payload validation")
 
 
 class FactionInfo(BaseModel):
@@ -25,6 +27,13 @@ class ItemAdded(BaseModel):
     timestamp: datetime
     zone_id: XID
     item_count: int
+
+    @validator("context")
+    def validate_context(cls, value: str) -> ItemAddedContext:
+        if value not in ItemAddedContext:
+            validation_logger.warn(f"Unrecognised context: {value}")
+            return ItemAddedContext.Unknown
+        return ItemAddedContext(value)
 
 
 class OutfitObj(BaseModel):
