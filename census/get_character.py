@@ -59,9 +59,9 @@ async def get_characters(
     ids: Iterable[int],
     fields: list[str] | None = None,
     joins: list[str] | None = None,
-) -> Iterable[Character]:
+) -> list[Character]:
     json = await get_raw_chars(session, ids)
-    return chars_from_census(json)
+    return list(chars_from_census(json))
 
 
 paged_get_chars = lambda session: with_page(get_characters(session))
