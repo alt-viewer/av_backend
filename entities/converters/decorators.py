@@ -1,7 +1,7 @@
 from functools import wraps
-from typing import Any, Awaitable, Callable, ParamSpec, Type, TypeAlias, TypeVar
-
+from typing import Any, ParamSpec, TypeAlias, TypeVar, Generic
 import toolz.curried as toolz
+from collections.abc import Sequence, Awaitable, Callable
 
 T = TypeVar("T")
 P = ParamSpec("P")
@@ -10,10 +10,24 @@ P = ParamSpec("P")
 # See https://stackoverflow.com/a/72644857
 JSONValue: TypeAlias = "int | str | JSON | list[JSON]"
 JSON: TypeAlias = dict[str, JSONValue]
-Converter: TypeAlias = Callable[[JSON], T]
 
 
-def with_conversion(converter: Converter):
+class Converter(Generic[T]):
+    def __init__(self, cast: Callable[[JSON], dict[str, Any]], construct: type[T]):
+        self.cast = cast
+        self.construct = construct
+
+    def __call__(self, json: JSON) -> T:
+        return toolz.pipe(
+            json,
+            self.cast,
+            lambda casted: self.construct(**casted),
+        )
+
+
+def with_conversion(
+    converter: Converter[T],
+) -> Callable[[Callable[P, Awaitable[list[JSON]]]], Callable[P, Awaitable[list[T]]]]:
     """
     After the decorated async function has returned, apply `converter` to each result.
     Useful for REST or database queries.
@@ -32,9 +46,9 @@ def with_conversion(converter: Converter):
     return decorate
 
 
-def converter(cast: Callable[[JSON], dict[str, Any]], construct: Type) -> Converter:
+# NOTE: left here for backwards-compatibility
+def converter(
+    cast: Callable[[JSON], dict[str, Any]], construct: type[T]
+) -> Converter[T]:
     """Make a function that converts a JSON response to the desired type"""
-    return toolz.compose(
-        lambda d: construct(**d),
-        cast,
-    )
+    return Converter(cast, construct)
