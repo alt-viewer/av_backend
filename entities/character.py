@@ -25,18 +25,26 @@ class Character(Jsonable, HasInventory):
     uid: str | None
 
     def json(self) -> dict:
-        return {
-            "name": self.name,
-            "xid": self.xid,
-            "outfitTag": self.outfit_tag,
-            "outfitID": self.outfit_id,
-            "factionID": self.faction_id.value,
-            "serverID": self.server_id.value,
-            "battleRank": self.battle_rank,
-            "lastLogin": self.last_login.isoformat(),
-            "items": [i.json() for i in self.items],
-            "_id": self.uid,
-        }
+        """
+        Convert this instance to a JSON-compatible dict.
+
+        NOTE: `lastLogin` is left as a `datetime` to allow the user to decide which format they want.
+        """
+        return (
+            {
+                "name": self.name,
+                "xid": self.xid,
+                "outfitTag": self.outfit_tag,
+                "outfitID": self.outfit_id,
+                "factionID": self.faction_id.value,
+                "serverID": self.server_id.value,
+                "battleRank": self.battle_rank,
+                "lastLogin": self.last_login,  # Defer handling of dates to caller
+                "items": [i.json() for i in self.items],
+            }
+            # Avoid outputting {"_id": None}
+            | ({"_id": self.uid} if self.uid is not None else {})
+        )
 
     def update(
         self,

@@ -19,10 +19,15 @@ class Item(Jsonable):
     uid: str | None = None
 
     def json(self) -> dict:
+        """
+        Convert this instance to a JSON-compatible dict.
+
+        NOTE: `lastRecorded` is left as a `datetime` to allow the user to decide which format they want
+        """
         return {
             "xid": self.id,
             "_id": self.uid,
-            "lastRecorded": self.last_recorded.isoformat(),
+            "lastRecorded": self.last_recorded,
         }
 
     @property
