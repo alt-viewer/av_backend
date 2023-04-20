@@ -35,12 +35,11 @@
       "outfitID": {
         "bsonType": ["null", "long"],
         "minimum": 0,
-        "description": "'outfitID' must be an integer above 0"
+        "description": "'outfitID' must be an integer above 0 or null"
       },
       "outfitTag": {
         "bsonType": ["null", "string"],
-        "pattern": "^.+$",
-        "description": "'outfitTag' must be a non-empty string"
+        "description": "'outfitTag' must be a string or null"
       },
       "lastLogin": {
         "bsonType": "date",
